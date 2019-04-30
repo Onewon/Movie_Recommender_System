@@ -24,30 +24,29 @@
 <div>
   <ul class="nav nav-pills nav-justified" id="index">
   {% for item in item_list %}
-  <li><a href="#tab{{forloop.counter0}}" data-toggle="tab" style="color: FFF;">{{item}}</a></li>
+  <li><a href="#tab{{forloop.counter}}" data-toggle="tab" style="color: FFF;">{{item}}</a></li>
   {% endfor %}
   </ul>
 </div>
 
   <div class="tab-content" id="my-content">
 {% for grene,indexs in genres.items %}
-{% comment %}使用tags 去build items(), keys(), values()..{% endcomment %}
     {% if grene == "action" %}
-    <div class="tab-pane fade" id="tab0">
-    {% elif grene == "animation" %}
     <div class="tab-pane fade" id="tab1">
-    {% elif grene == "comedy" %}
+    {% elif grene == "animation" %}
     <div class="tab-pane fade" id="tab2">
-    {% elif grene == "crime" %}
+    {% elif grene == "comedy" %}
     <div class="tab-pane fade" id="tab3">
-    {% elif grene == "drama" %}
+    {% elif grene == "crime" %}
     <div class="tab-pane fade" id="tab4">
-    {% elif grene == "love" %}
+    {% elif grene == "drama" %}
     <div class="tab-pane fade" id="tab5">
-    {% elif grene == "science" %}
+    {% elif grene == "love" %}
     <div class="tab-pane fade" id="tab6">
-    <!-- {% elif grene == "thriller" %}
-    <div class="tab-pane fade" id="tab7"> -->
+    {% elif grene == "science" %}
+    <div class="tab-pane fade" id="tab7">
+    {% elif grene == "thriller" %}
+    <div class="tab-pane fade" id="tab8">
     {% endif %}
 
  <ul class="figures_lists"
@@ -61,6 +60,7 @@
   vertical-align: top;
   margin-bottom: 20px;
   position: relative;
+  width:15%;
   padding: 8px;"
   >
       <div class="pic" style="width: 80%;">
@@ -76,7 +76,7 @@
 
 
 
-</div>
+<!-- </div> -->
 {% endfor %}
 
 {% else %}

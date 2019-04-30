@@ -58,8 +58,8 @@ class IndexView(TemplateView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        # context['item_list'] = ["Action","Horror","Comedy","Animation","Science fiction","Crime","Love","Drama"]
-        context['item_list'] = ["Action","Horror","Comedy","Animation","Science fiction","Crime","Love"]
+        context['item_list'] = ["Action","Animation","Comedy","Crime","Drama","Love","Science fiction","Thriller"]
+        # context['item_list'] = ["Action","Horror","Comedy","Animation","Science fiction","Crime","Love"]
         context['genres'] = genre_set # {genre : [index]}
         context['titleset'] = dataset
         return context
