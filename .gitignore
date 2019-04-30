@@ -1,3 +1,9 @@
 user/migrations/*.py
 moviedata/migrations/*.py
 *.pyc
+MRS/__pycache__/urls.cpython-36.pyc
+moviedata/__pycache__/views.cpython-36.pyc
+user/__pycache__/models.cpython-36.pyc
+user/__pycache__/views.cpython-36.pyc
+user/templatetags/__pycache__/the_tag.cpython-36.pyc
+.gitignore
