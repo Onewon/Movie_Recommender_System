@@ -67,7 +67,7 @@
         <img src="{% static 'res/movies/'%}{{grene}}/{{index|check_index}}.jpg">
       </div>
       <div class="figure_title" align="center">
-      <a href="moviedetail/searchbyid?id=tt{{index}}" target="_blank" style="color: honeydew">{{ titleset|get_value:index }}</a>
+      <a href="moviedetail/searchbyid?id=tt{{index}}" target="_blank" style="color: honeydew;">{{ titleset|get_value:index }}</a>
       </div>
     </li>
 {% endfor %}
