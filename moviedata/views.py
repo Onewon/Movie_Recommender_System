@@ -53,6 +53,7 @@ class detailView(TemplateView):
         context['Director'] = data.get("Director")
         context['Language'] = data.get("Language")
         context['Country'] = data.get("Country")
+        context['index'] = data.get("imdbID")
         return context
 
 class detailbyIDView(TemplateView):
@@ -62,6 +63,7 @@ class detailbyIDView(TemplateView):
         data = getcontent(param,useid=True)
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
+        context['index'] = param
         context['Poster'] = data.get("Poster")
         context['Title'] = data.get("Title")
         context['Released'] = data.get("Released")

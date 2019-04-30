@@ -7,6 +7,8 @@ from .forms import RegisterForm
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 import json,requests,os
+from user.models import Resulttable as rt
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 static_path = BASE_DIR + r"\static\res\movies"
@@ -60,7 +62,7 @@ class IndexView(TemplateView):
         # Add in a QuerySet of all the books
         context['item_list'] = ["Action","Animation","Comedy","Crime","Drama","Love","Science fiction","Thriller"]
         # context['item_list'] = ["Action","Horror","Comedy","Animation","Science fiction","Crime","Love"]
-        context['genres'] = genre_set # {genre : [index]}
+        context['genres'] = genre_set
         context['titleset'] = dataset
         return context
 
@@ -102,3 +104,15 @@ def register(request):
     # 如果用户正在访问注册页面，则渲染的是一个空的注册表单
     # 如果用户通过表单提交注册信息，但是数据验证不合法，则渲染的是一个带有错误信息的表单
     return render(request, 'registration/register.html', context={'form': form})
+
+def rating(request):
+    if request.method=="POST":
+        rating_form = request.POST
+        USERID = int(rating_form["userid"]) +1000
+        IMDBID = str(rating_form["movieid"])
+        MOVIE_RATING = float(rating_form["rating"])
+        rt.objects.create(userid=USERID,rating_Movieid=IMDBID,rating=MOVIE_RATING)
+    else:
+        pass
+    #return render(request, 'index.html',{'userId':USERID,'rating':RATING,'imdbId':IMDBID})
+    return HttpResponseRedirect('/')

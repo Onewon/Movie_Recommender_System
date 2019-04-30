@@ -28,6 +28,7 @@ urlpatterns = [
     re_path(r'^search/$', TemplateView.as_view(template_name='search.html'),),
     re_path(r'^search/query$', v.search_detail),
     re_path(r'db$', v.search),
+    re_path(r'rating/', v.rating),
     re_path(r'^moviedetail/search$',detailView.as_view(),name=''),
     re_path(r'^moviedetail/searchbyid$',detailbyIDView.as_view(),name=''),
     path(r'accounts/', include('user.url')),

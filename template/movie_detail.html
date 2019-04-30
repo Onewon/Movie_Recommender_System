@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load the_tag %}
 
 {% block head %}
     <title>Movie Recommender System</title>
@@ -797,11 +798,13 @@
     <div id="director"><b>Director:</b> {{Director}}</div>
     <div id="language"><b>Language:</b> {{Language}}</div>
     <div id="country"><b>Country:</b> {{Country}}</div>
+
     <star></star>
     <input type="hidden" id="hint"></input>
-    <button id="submit_score">rate it!</button>
+    <button id="submit_score" type="button">rate it!</button>
     </div>
 </div>
+<!-- <iframe id="id_iframe" name="nf_iframe" style="display:none;"></iframe> -->
 
 <script>
     $('star').raty(
@@ -829,10 +832,18 @@
 </script>
 
 <script>
-var rateclick = document.getElementById('submit_score');
-rateclick.onclick =function(){
-  alert(result);
-}
+// var rateclick = document.getElementById('submit_score');//big bug
+$(document).ready(function(){
+$("#submit_score").click(function(){
+    $.post("/rating/",{userid:"{{user.id}}", movieid:"{{index}}",rating:result,'csrfmiddlewaretoken':'{{ csrf_token }}'});
+    //,function(data,status){ #返回的response数据
+		alert("user {{user.id}} rate the movie {{index}} the score "+ result +" successfully");
+  })
+})
+// rateclick.onclick =function(){
+//   alert("user {{user.id}} rate the movie {{index}} the mark "+result);
+// }
+
 </script>
 {% endblock %}
 

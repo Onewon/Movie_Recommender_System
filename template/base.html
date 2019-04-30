@@ -42,7 +42,7 @@
                         <div>
                             {% if user.is_authenticated %}
                             <ul class="nav navbar-nav navbar-right">
-                                <li><a class="login_info" style="font-size: 15px">Welcome ! {{ user.username }} </a></li>
+                                <li><a class="login_info" style="font-size: 15px">Welcome ! {{user.id}} {{ user.username }} </a></li>
                                 <li><a href="#">MyProfile</a></li>
                                 <li><a class="btn btn-default btn-outline btn-circle" href="{% url 'logout' %}">Logout</a></li>
                             </ul>

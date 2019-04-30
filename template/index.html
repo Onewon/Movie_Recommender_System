@@ -14,7 +14,10 @@
 	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
    	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
      <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+     <script src="{% static 'js/jquery.raty.js' %}"></script>
      <!-- <link rel="stylesheet" href="{% static 'css/index.css' %}"> -->
+     <link rel="stylesheet" href="{% static 'css/jquery.raty.css' %}">
+
 {% endblock %}
 
 
@@ -50,31 +53,22 @@
     {% endif %}
 
  <ul class="figures_lists"
- style=
- "margin-left: 35;
- list-style-type: none;">
+ style= "margin-left: 35; list-style-type: none;">
 {% for index in indexs %}
   <li class="list_item" data-trigger-class="list_item_hover"
-  style=
-  "display: inline-block;
-  vertical-align: top;
-  margin-bottom: 20px;
-  position: relative;
-  width:15%;
-  padding: 8px;"
-  >
+  style=  "display: inline-block;  vertical-align: top;  margin-bottom: 20px;  position: relative;  width:15%;  padding: 5px;">
       <div class="pic" style="width: 80%;">
-        <img src="{% static 'res/movies/'%}{{grene}}/{{index|check_index}}.jpg">
+      <img src="{% static 'res/movies/'%}{{grene}}/{{index|check_index}}.jpg">
       </div>
       <div class="figure_title" align="center">
       <a href="moviedetail/searchbyid?id=tt{{index}}" target="_blank" style="color: honeydew;">{{ titleset|get_value:index }}</a>
       </div>
+      <div class="rating" align="center"><star></star></div>
+      <input type="hidden" id="hint"></input>
     </li>
 {% endfor %}
 </ul>
 </div>
-
-
 
 <!-- </div> -->
 {% endfor %}
@@ -86,5 +80,15 @@
 </section>
 {% endif %}
 
-
+<script>
+  $('star').raty(
+{ target : '#hint',
+  starOff : '{% static "res/images/star-off-big.png" %}',
+  starOn  : '{% static "res/images/star-on-big.png" %}',
+  starHalf : '{% static "res/images/star-half-big.png" %}',
+  targetKeep : true,
+  targetType: 'score',
+  number: 5,
+  half:true,})
+</script>
 {% endblock %}
