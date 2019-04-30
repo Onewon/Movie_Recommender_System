@@ -1,0 +1,83 @@
+{% load staticfiles %}
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{% static 'css/base.css' %}">
+{% block head %}
+{% endblock %}
+</head>
+
+<body>
+        <nav class="navbar navbar-default" style="font-size: large;">
+                <div class="container">
+                  <!-- Brand and toggle get grouped for better mobile display -->
+                  <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Movie Recommender System</a>
+                  </div>
+
+                  <!-- Collect the nav links, forms, and other content for toggling -->
+                  <div class="collapse navbar-collapse" id="navbar-collapse-3">
+                    <ul class="nav navbar-nav navbar-default">
+                      <li><a href="/">Home</a></li>
+                      <!-- <li><a href="#">Search</a></li> -->
+
+                      <li><a href="/">About</a></li>
+                      <li><a href="/search">BigSearh</a></li>
+                      <li>
+                        <a class="btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse2" aria-expanded="false" aria-controls="nav-collapse2">Search</a>
+                      </li>
+                    </ul>
+      
+                    <div class="container_">
+                        <div>
+                            {% if user.is_authenticated %}
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a class="login_info" style="font-size: 15px">Welcome ! {{ user.username }} </a></li>
+                                <li><a href="#">MyProfile</a></li>
+                                <li><a class="btn btn-default btn-outline btn-circle" href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
+                            {% else %}
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                                <li><a href="{% url 'user:register' %}">Register</a></li>
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse2">
+                      <form class="navbar-form navbar-right form-inline" role="form" action="db">
+                        <div class="form-group">
+                          <label class="sr-only" for="Email">Keyword</label>
+                          <!-- <input type="text" class="form-control" id="keyword" placeholder="Movie Name..." autofocus required /> -->
+                          <form action="?" method="GET" >
+                               <input type="search" class="form-control" id="keyword" name="imdb" value="" placeholder="Movie Name..." />
+                               <button type="submit" class="btn btn-success">Search</button>
+                          </form>
+
+                        </div>
+                        <!-- <div class="form-group">
+                          <label class="sr-only" for="Password">Password</label>
+                          <input type="password" class="form-control" id="Password" placeholder="Password" required />
+                        </div> -->
+
+                      </form>
+                    </div>
+                  </div><!-- /.navbar-collapse -->
+                </div><!-- /.container -->
+              </nav><!-- /.navbar -->
+
+{% block content %}
+{% endblock %}
+
+</body>
