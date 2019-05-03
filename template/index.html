@@ -32,7 +32,7 @@
   </ul>
 </div>
 
-  <div class="tab-content" id="my-content">
+<div class="tab-content" id="my-content">
 {% for grene,indexs in genres.items %}
     {% if grene == "action" %}
     <div class="tab-pane fade" id="tab1">
@@ -57,14 +57,16 @@
 {% for index in indexs %}
   <li class="list_item" data-trigger-class="list_item_hover"
   style=  "display: inline-block;  vertical-align: top;  margin-bottom: 20px;  position: relative;  width:15%;  padding: 5px;">
-      <div class="pic" style="width: 80%;">
-      <img src="{% static 'res/movies/'%}{{grene}}/{{index|check_index}}.jpg">
+      <div class="pic" style="width: 80%">
+      <img style="width: 182px;height: 268px;" src="{% static 'res/movies/'%}{{grene}}/{{index|check_index}}.jpg">
       </div>
       <div class="figure_title" align="center">
       <a href="moviedetail/searchbyid?id=tt{{index}}" target="_blank" style="color: honeydew;">{{ titleset|get_value:index }}</a>
       </div>
-      <div class="rating" align="center"><star></star></div>
-      <input type="hidden" id="hint"></input>
+      <div id="{{index}}_rating" align="center"><star></star></div>
+      <input id="hint" type="hidden"></input>
+      <div class="button" align="center"><button class="submit_score"
+         id="{{index}}" >Submit</button></div>
     </li>
 {% endfor %}
 </ul>
@@ -79,7 +81,9 @@
   <p>Please <a href="{% url 'login' %}">login</a> first</p>
 </section>
 {% endif %}
+{% endblock %}
 
+{% block javascript %}
 <script>
   $('star').raty(
 { target : '#hint',
@@ -89,6 +93,36 @@
   targetKeep : true,
   targetType: 'score',
   number: 5,
+  hints: ['bad', 'dislike', 'regular', 'like', 'preferred'],
   half:true,})
+</script>
+
+<script>
+ $(document).ready(function(){
+$(".submit_score").on("click",function(){
+  var imdb_ID = $(this).attr("id");
+  var imdb_id = "tt"+imdb_ID;
+  var rating_filed = document.getElementById(imdb_ID+"_rating")
+  var the_score = rating_filed.getElementsByTagName("input")[0].value;
+  /*
+  $(rating_filed).find('star').raty(
+    {
+  target : '#hint',
+  starOff : '{% static "res/images/star-off-big.png" %}',
+  starOn  : '{% static "res/images/star-on-big.png" %}',
+  starHalf : '{% static "res/images/star-half-big.png" %}',
+  targetKeep : true,
+  targetType: 'score',
+  score: the_score,
+  readOnly: true,
+  hints:  ['bad', 'dislike', 'regular', 'like', 'prefer'],
+  half:true,
+    }) */
+  $.post("/rating/",{userid:"{{user.id}}", movieid: imdb_id,rating:the_score,
+  'csrfmiddlewaretoken':'{{ csrf_token }}'});
+  alert(imdb_id+" userid:{{user.id}} Score:"+the_score);
+  $(this).replaceWith("<p style='font-size:18px;color:white;'>Submitted</p>");
+})
+})
 </script>
 {% endblock %}

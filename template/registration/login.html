@@ -19,7 +19,7 @@
             <div class="unit-1-2 unit-1-on-mobile">
                 <h2>Login</h2>
                 <form class="form" action="{% url 'login' %}" method="post">
-                    {% csrf_token %} 
+                    {% csrf_token %}
                     {{ form.non_field_errors }}
                     {% for field in form %}
                         {{ field.label_tag }}
@@ -29,13 +29,13 @@
                             <p class="help text-small text-muted">{{ field.help_text|safe }}</p>
                         {% endif %}
                     {% endfor %}
-                    {% comment %} username and password below {% endcomment %}
+
                     <button type="submit" class="btn btn-primary btn-block">Login</button>
                     <input type="hidden" name="next" value="{{ next }}"/>
                 </form>
                 <div class="flex-left top-gap text-small">
                     <div class="unit-2-3"><span>New user？<a href="{% url 'user:register' %}">Register a account</a></span></div>
-{#                    <div class="unit-1-3 flex-right"><span><a href="reset_password.html">忘记密码？</a></span></div>#}
+{#                    <div class="unit-1-3 flex-right"><span><a href="reset_password.html">forget psw？</a></span></div>#}
                 </div>
             </div>
         </div>

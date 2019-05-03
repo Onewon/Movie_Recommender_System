@@ -7,3 +7,10 @@ user/__pycache__/models.cpython-36.pyc
 user/__pycache__/views.cpython-36.pyc
 user/templatetags/__pycache__/the_tag.cpython-36.pyc
 .gitignore
+user/__pycache__/views.cpython-36.pyc
+MRS/__pycache__/settings.cpython-36.pyc
+user/__pycache__/views.cpython-36.pyc
+MRS/__pycache__/settings.cpython-36.pyc
+user/__pycache__/views.cpython-36.pyc
+MRS/__pycache__/settings.cpython-36.pyc
+moviedata/__pycache__/models.cpython-36.pyc

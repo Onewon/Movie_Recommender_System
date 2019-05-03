@@ -31,13 +31,13 @@
                       <li><a href="/">Home</a></li>
                       <!-- <li><a href="#">Search</a></li> -->
 
-                      <li><a href="/">About</a></li>
+                      <li><a href="/">Recommendation</a></li>
                       <li><a href="/search">Search</a></li>
                       <li>
                         <a class="btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse2" aria-expanded="false" aria-controls="nav-collapse2">Find</a>
                       </li>
                     </ul>
-      
+
                     <div class="container_">
                         <div>
                             {% if user.is_authenticated %}
@@ -56,11 +56,11 @@
                     </div>
 
                     <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse2">
-                      <form class="navbar-form navbar-right form-inline" role="form" action="db">
+                      <form class="navbar-form navbar-right form-inline" role="form" action="db" target="_blank">
                         <div class="form-group">
                           <label class="sr-only" for="Email">Keyword</label>
                           <!-- <input type="text" class="form-control" id="keyword" placeholder="Movie Name..." autofocus required /> -->
-                          <form action="?" method="GET" >
+                          <form action="?" method="GET">
                                <input type="search" class="form-control" id="keyword" name="imdb" value="" placeholder="Movie Name..." />
                                <button type="submit" class="btn btn-success">Search</button>
                           </form>
@@ -81,3 +81,7 @@
 {% endblock %}
 
 </body>
+
+{% block javascript %}
+{% endblock %}
+</html>>

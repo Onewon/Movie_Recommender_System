@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 import json,os,requests
 from django.views.generic import TemplateView
+from .models import Moviestable as mt
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 static_path = BASE_DIR + r"\static\res\movies"
@@ -75,3 +76,8 @@ class detailbyIDView(TemplateView):
         context['Language'] = data.get("Language")
         context['Country'] = data.get("Country")
         return context
+
+
+# if __name__ == '__main__':
+#     print (mt.objects.all()[:5].filter(imdbID="*"))
+

@@ -92,9 +92,13 @@ def register(request):
         # 验证数据的合法性
         if form.is_valid():
             # 如果提交数据合法，调用表单的 save 方法将用户数据保存到数据库
-            form.save()
+            user = form.save()
 
             # 注册成功，跳转回首页
+            # user = authenticate(username=form["username"], password=form["password1"])
+            # auth.login(request, user)
+            request.session.set_expiry(0)
+            login(request,user)
             return redirect('/')
     else:
         # 请求不是 POST，表明用户正在访问注册页面，展示一个空的注册表单给用户
@@ -111,8 +115,17 @@ def rating(request):
         USERID = int(rating_form["userid"]) +1000
         IMDBID = str(rating_form["movieid"])
         MOVIE_RATING = float(rating_form["rating"])
-        rt.objects.create(userid=USERID,rating_Movieid=IMDBID,rating=MOVIE_RATING)
+        # rt.objects.create(userid=USERID,rating_Movieid=IMDBID,rating=MOVIE_RATING)
+        obj, created = rt.objects.update_or_create(
+            userid=USERID,rating_Movieid=IMDBID,
+            defaults={'rating': MOVIE_RATING},
+        )
+        #逻辑(1)：查找是否存在，存在不创建，修改； 不存在，则创建。Done
     else:
         pass
     #return render(request, 'index.html',{'userId':USERID,'rating':RATING,'imdbId':IMDBID})
     return HttpResponseRedirect('/')
+
+#逻辑(n)：批量评分集，用dict实现单页面重复添加去重？ 可是已经提交过的无法再次提交了
+#逻辑(3)：刷新后，已评分会显示已经评分的。
+#逻辑: 没有create就不会有重复，实现去重。Done

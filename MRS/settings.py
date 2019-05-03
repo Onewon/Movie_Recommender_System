@@ -26,7 +26,7 @@ SECRET_KEY = '6n2=&09^8(-mq50a+s@hlmp1m(&ri&)r)*q8mfh7q-gc3gqfrv'
 DEBUG = True
 
 # ALLOWED_HOSTS = ["192.168.0.181","127.0.0.1"]
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 
 # Application definition
@@ -139,3 +139,5 @@ STATICFILES_DIRS = (
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
