@@ -3,9 +3,7 @@ from django.shortcuts import render_to_response
 import json,os,requests
 from django.views.generic import TemplateView
 from .models import Moviestable as mt
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-static_path = BASE_DIR + r"\static\res\movies"
+from user.models import Resulttable as rt
 
 def getcontent(param,useid=False):# 获取api json
     db_api_t = "http://www.omdbapi.com/?apikey=9be27fce&t={}"
@@ -30,10 +28,10 @@ def getcontent(param,useid=False):# 获取api json
 #     data = getcontent(param)
 #     return render_to_response(template_name,data)
 
-def detailbyid(request,template_name):
-    param = request.GET.get("id")
-    data = getcontent(param,useid=True)
-    return render_to_response(template_name,data)
+# def detailbyid(request,template_name):
+#     param = request.GET.get("id")
+#     data = getcontent(param,useid=True)
+#     return render_to_response(template_name,data)
     # data : {"id":xxx}
     # templateView how to get request
 
@@ -77,7 +75,11 @@ class detailbyIDView(TemplateView):
         context['Country'] = data.get("Country")
         return context
 
-
-# if __name__ == '__main__':
-#     print (mt.objects.all()[:5].filter(imdbID="*"))
-
+class RecommendView(TemplateView):
+    template_name = 'recommend.html'
+    def get_context_data(self, **kwargs):
+        USERID = int(self.request.GET.get("user"))+1000
+        num_of_objects = int(rt.objects.filter(userid=USERID).count())
+        context = super().get_context_data(**kwargs)
+        context['rating_movies'] = num_of_objects
+        return context

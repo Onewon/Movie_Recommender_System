@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <title>Movie Recommender System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+   	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.raty.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class ="container" style="background-color: rgb(255, 255, 255,0.65); height:90%;">
+    <div class="row">
+    <div id="userdetail" class="col-md-4 col-sm-6 col-xs-12 sidebar">
+    <h2>{{user.id}}</h2>
+    <h2>{{user.username}}</h2>
+    </div>
+
+    <div id="rating detail" class="col-md-8 col-sm-6 col-xs-12 content" style="font-size: 22px;color: rgb(42, 43, 42)">
+    <h2>The Movies You Rated</h2>
+    <div id="movie_container">
+        <p>-----------------------</p>
+        <div id="movie_poster">
+            movie_poster
+        </div>
+        <div id="rating_time">
+            rating_time
+        </div>
+        <div id="movie_genre">
+            movie_genre
+        </div>
+        <div id="movie_rating">
+            movie_rating
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

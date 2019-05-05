@@ -27,10 +27,10 @@ def getfilename(path): #poster_dir, filename
         if os.path.isfile(fp):
             # file_dir =os.path.join(path)+"/"+filename
             filename = filename.replace('.jpg','')
-            if(len(filename)==6):
-                filename = "0"+filename
-            elif(len(filename)==5):
-                filename = "00"+filename
+            # if(len(filename)==6):
+            #     filename = "0"+filename
+            # elif(len(filename)==5):
+            #     filename = "00"+filename
             container.append(filename)
     return (container)
 
@@ -40,13 +40,14 @@ for f in (getfolder(static_path)): #得到所有的type名称和type文件夹地
     movie_type = f
     movie_type_dir = static_path+"\\"+f
     dir_set[movie_type] = movie_type_dir      #{genre: [path],....}
+
 for genre in dir_set.keys(): #每一个类别
     # print ("Genre: "+genre)
     con = []
     for ix in getfilename(dir_set.get(genre)): #通过所有的type文件夹地址
         con.append(ix)                         #得到所有的file名字
     genre_set[genre] = con                     # {genre: [index.....], .....}
-with open(BASE_DIR +"/static/res/default_data.json","r",encoding="utf-8") as inp:
+with open(BASE_DIR +"/static/res/title_index.json","r",encoding="utf-8") as inp:
     data = inp.read()
     dataset = json.loads(data)
 
@@ -60,10 +61,14 @@ class IndexView(TemplateView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        context['item_list'] = ["Action","Animation","Comedy","Crime","Drama","Love","Science fiction","Thriller"]
+        context['item_list'] = ["Action","Animation","Comedy","Crime","Drama",
+        "Love","Science fiction","Thriller","War"]
+        # context['item_list'] = ["Action","Animation","Comedy","Crime","Drama",
+        # "Love","Science fiction","Thriller",
+        # "Biography","Family","History","Horror","Music","War",]
         # context['item_list'] = ["Action","Horror","Comedy","Animation","Science fiction","Crime","Love"]
-        context['genres'] = genre_set
-        context['titleset'] = dataset
+        context['genres'] = genre_set #首页的预设genre得到index 不需要get json
+        context['titleset'] = dataset #首页的预设title 不需要get json
         return context
 
 # def index(request,template_name):
@@ -75,12 +80,10 @@ def search(request):
     return HttpResponseRedirect("https://www.imdb.com/find?ref_=nv_sr_fn&q="+param+"&s=all")
     # context={'data': param1,}
     # return render(request, 'display.html', context)
-
 def search_detail(request):
     param = request.GET.get("q")
     return HttpResponseRedirect("/moviedetail/search?title="+param)
     #return HttpResponseRedirect("http://www.omdbapi.com/?&t="+param+"&apikey=9be27fce")
-
 def register(request):
     # 只有当请求为 POST 时，才表示用户提交了注册信息
     if request.method == 'POST':
@@ -108,7 +111,6 @@ def register(request):
     # 如果用户正在访问注册页面，则渲染的是一个空的注册表单
     # 如果用户通过表单提交注册信息，但是数据验证不合法，则渲染的是一个带有错误信息的表单
     return render(request, 'registration/register.html', context={'form': form})
-
 def rating(request):
     if request.method=="POST":
         rating_form = request.POST

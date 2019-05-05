@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Movie Recommender System</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+   	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" href="{% static 'css/search.css' %}"> -->
+	{% endblock %}
+
+
+
+{% block content %}
+<div class = "box">
+    <div id="test">
+        <h1>You have rated {{rating_movies}} movies</h1>
+    </div>
+    <button id="Recom" style="position: relative; border-radius: 25px 25px 25px 25px; font-size-adjust: inherit; height: 50px; border: none; outline: none; cursor: pointer; background: #4CAF50; color: #fff;">Generate Recommendation</button>
+    <!-- Post -->
+</div>
+{% endblock %}

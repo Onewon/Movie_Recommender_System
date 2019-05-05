@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load the_tag %}
 
-<html>
+
 
 {% block head %}
     <meta charset="utf-8" />
@@ -10,13 +10,14 @@
     <title>Movie Recommender System</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-   	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-     <script src="{% static 'js/jquery.raty.js' %}"></script>
+	  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/jquery.raty.css' %}">
+    <!-- <link rel="stylesheet" href="http://www.bootcss.com/p/buttons/css/buttons.css"> -->
+	  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="{% static 'js/jquery.raty.js' %}"></script>
      <!-- <link rel="stylesheet" href="{% static 'css/index.css' %}"> -->
-     <link rel="stylesheet" href="{% static 'css/jquery.raty.css' %}">
 
 {% endblock %}
 
@@ -24,8 +25,8 @@
 {% block content %}
 
 {% if user.is_authenticated %}
-<div>
-  <ul class="nav nav-pills nav-justified" id="index">
+<div id="nav_index">
+  <ul class="nav nav-pills nav-justified">
   {% for item in item_list %}
   <li><a href="#tab{{forloop.counter}}" data-toggle="tab" style="color: FFF;">{{item}}</a></li>
   {% endfor %}
@@ -34,47 +35,63 @@
 
 <div class="tab-content" id="my-content">
 {% for grene,indexs in genres.items %}
-    {% if grene == "action" %}
+    {% if grene == "Action" %}
     <div class="tab-pane fade" id="tab1">
-    {% elif grene == "animation" %}
+    {% elif grene == "Animation" %}
     <div class="tab-pane fade" id="tab2">
-    {% elif grene == "comedy" %}
+    {% elif grene == "Comedy" %}
     <div class="tab-pane fade" id="tab3">
-    {% elif grene == "crime" %}
+    {% elif grene == "Crime" %}
     <div class="tab-pane fade" id="tab4">
-    {% elif grene == "drama" %}
+    {% elif grene == "Drama" %}
     <div class="tab-pane fade" id="tab5">
-    {% elif grene == "love" %}
+    {% elif grene == "Romance" %}
     <div class="tab-pane fade" id="tab6">
-    {% elif grene == "science" %}
+    {% elif grene == "Sci-Fi" %}
     <div class="tab-pane fade" id="tab7">
-    {% elif grene == "thriller" %}
+    {% elif grene == "Thriller" %}
     <div class="tab-pane fade" id="tab8">
+    {% elif grene == "Biography" %}
+    <div class="tab-pane fade" id="tab14">
+    {% elif grene == "Family" %}
+    <div class="tab-pane fade" id="tab10">
+    {% elif grene == "History" %}
+    <div class="tab-pane fade" id="tab11">
+    {% elif grene == "Horror" %}
+    <div class="tab-pane fade" id="tab12">
+    {% elif grene == "Music" %}
+    <div class="tab-pane fade" id="tab13">
+    {% elif grene == "War" %}
+    <div class="tab-pane fade" id="tab9">
     {% endif %}
-
+  <!-- "Biography","Family","History","Horror","Music","War",] -->
  <ul class="figures_lists"
  style= "margin-left: 35; list-style-type: none;">
-{% for index in indexs %}
+{% for index in indexs|rangeoflist %}
   <li class="list_item" data-trigger-class="list_item_hover"
   style=  "display: inline-block;  vertical-align: top;  margin-bottom: 20px;  position: relative;  width:15%;  padding: 5px;">
       <div class="pic" style="width: 80%">
-      <img style="width: 182px;height: 268px;" src="{% static 'res/movies/'%}{{grene}}/{{index|check_index}}.jpg">
+      <!-- <img style="width: 182px;height: 268px;" src="{% static 'res/movies/'%}{{grene}}/{{index|check_index}}.jpg"> -->
+      <img style="width: 182px;height: 268px;" src="{% static 'res/movies/'%}{{grene}}/{{index}}.jpg">
+      <!-- 从目标genre中选择出来 -->
       </div>
       <div class="figure_title" align="center">
-      <a href="moviedetail/searchbyid?id=tt{{index}}" target="_blank" style="color: honeydew;">{{ titleset|get_value:index }}</a>
+      <!-- <a href="moviedetail/searchbyid?id=tt{{index}}" target="_blank" style="color: honeydew;">{{ titleset|get_value:index }}</a> -->
+      <a href="moviedetail/searchbyid?id={{index}}" target="_blank" style="color: honeydew;">{{ titleset|get_value:index }}</a>
       </div>
       <div id="{{index}}_rating" align="center"><star></star></div>
       <input id="hint" type="hidden"></input>
-      <div class="button" align="center"><button class="submit_score"
-         id="{{index}}" >Submit</button></div>
+      <div class="button" align="center">
+        <button class="submit_score" id="{{index}}" onMouseOver="this.style.background='rgba(76, 175, 79, 0.753)'" onMouseOut="this.style.background='#4CAF50'" style="position: relative; border-radius: 25px 25px 25px 25px; width: 90px; height: 30px; border: none; outline: none; cursor: pointer; background: #4CAF50; color: #fff;">Submit</button>
+      </div>
     </li>
 {% endfor %}
 </ul>
 </div>
 
-<!-- </div> -->
 {% endfor %}
 
+<!-- </div> -->
 {% else %}
 <section class="not_logined" style="font-size: 30px;">
   <p>You are not logged in</p>
@@ -101,7 +118,8 @@
  $(document).ready(function(){
 $(".submit_score").on("click",function(){
   var imdb_ID = $(this).attr("id");
-  var imdb_id = "tt"+imdb_ID;
+  // var imdb_id = "tt"+imdb_ID;
+  var imdb_id = imdb_ID;
   var rating_filed = document.getElementById(imdb_ID+"_rating")
   var the_score = rating_filed.getElementsByTagName("input")[0].value;
   /*
@@ -120,9 +138,24 @@ $(".submit_score").on("click",function(){
     }) */
   $.post("/rating/",{userid:"{{user.id}}", movieid: imdb_id,rating:the_score,
   'csrfmiddlewaretoken':'{{ csrf_token }}'});
-  alert(imdb_id+" userid:{{user.id}} Score:"+the_score);
-  $(this).replaceWith("<p style='font-size:18px;color:white;'>Submitted</p>");
+  // alert(imdb_id+" userid:{{user.id}} Score:"+the_score);
+  // $(this).replaceWith("<p style='font-size:18px;color:white;'>Submitted</p>");
+  $(this).replaceWith('<button disabled="" class="submit_score" id="{{index}}" style="position: relative;border-radius: 25px 25px 25px 25px;width: 90px;height: 30px;border: none;outline: none;cursor: pointer;background: rgba(255, 255, 255, 0.2);color: #CCC;">'+the_score+'</button>');
 })
 })
+</script>
+<script>
+    var nav = document.getElementById("nav_index");
+
+    window.onscroll = function(){
+        if(window.pageYOffset > 100){
+            nav.style.position = "fixed";
+            nav.style.top = 0;
+            nav.style.zIndex = "999";
+        }else{
+            nav.style.position = "absolute";
+            nav.style.top = 55;
+        }
+    }
 </script>
 {% endblock %}

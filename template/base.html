@@ -30,8 +30,11 @@
                     <ul class="nav navbar-nav navbar-default">
                       <li><a href="/">Home</a></li>
                       <!-- <li><a href="#">Search</a></li> -->
-
+                      {% if user.is_authenticated %}
+                      <li><a href="/recommend?user={{user.id}}">Recommendation</a></li>
+                      {% else %}
                       <li><a href="/">Recommendation</a></li>
+                      {% endif %}
                       <li><a href="/search">Search</a></li>
                       <li>
                         <a class="btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse2" aria-expanded="false" aria-controls="nav-collapse2">Find</a>
@@ -42,8 +45,8 @@
                         <div>
                             {% if user.is_authenticated %}
                             <ul class="nav navbar-nav navbar-right">
-                                <li><a class="login_info" style="font-size: 15px">Welcome ! {{user.id}} {{ user.username }} </a></li>
-                                <li><a href="#">MyProfile</a></li>
+                                <li><a class="login_info" style="font-size: 15px">Welcome ! {{ user.username }} </a></li>
+                                <li><a href="/profile">MyProfile</a></li>
                                 <li><a class="btn btn-default btn-outline btn-circle" href="{% url 'logout' %}">Logout</a></li>
                             </ul>
                             {% else %}
@@ -73,15 +76,14 @@
 
                       </form>
                     </div>
-                  </div><!-- /.navbar-collapse -->
-                </div><!-- /.container -->
-              </nav><!-- /.navbar -->
+                  </div>
+                </div>
+              </nav>
 
 {% block content %}
 {% endblock %}
-
 </body>
 
 {% block javascript %}
 {% endblock %}
-</html>>
+</html>
