@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<title>Item-based Recommendation</title>
+{% endblock %}
+
+{% block content %}
+<li class="list_item" data-trigger-class="list_item_hover" style="display: inline-block;
+vertical-align: top;  margin-bottom: 20px;  position: relative;  width:15%;  padding: 5px;">
+    <div class="pic" style="width: 80%">
+        <img style="width: 182px;height: 268px;" src="">
+    </div>
+    <div class="figure_title" align="center">
+        <a href="" target="_blank" style="color: honeydew;">Title</a>
+    </div>
+</li>
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

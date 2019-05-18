@@ -23,17 +23,6 @@ def getcontent(param,useid=False):# 获取api json
     else:
         pass
 
-# def detail(request,template_name): #bug
-#     param = request.GET.get("title")
-#     data = getcontent(param)
-#     return render_to_response(template_name,data)
-
-# def detailbyid(request,template_name):
-#     param = request.GET.get("id")
-#     data = getcontent(param,useid=True)
-#     return render_to_response(template_name,data)
-    # data : {"id":xxx}
-    # templateView how to get request
 def getprofile(request): #for empty user, has bugs.
     con = []
     if request.method=="POST":
@@ -46,7 +35,21 @@ def getprofile(request): #for empty user, has bugs.
     else:
         pass
     return render(request, 'profile.html',{'container':con})
-    # return HttpResponseRedirect('/')
+
+def recom1(request):
+    if request.method=="POST":
+        form = request.POST
+        USERID = int(form["USERID"])+1000
+    else:
+        pass
+    return render(request, 'result_user.html',{})
+def recom2(request):
+    if request.method=="POST":
+        form = request.POST
+        USERID = int(form["USERID"])+1000
+    else:
+        pass
+    return render(request, 'result_item.html',{})
 
 class detailView(TemplateView):
     template_name = 'movie_detail.html'
@@ -96,3 +99,19 @@ class RecommendView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['rating_movies'] = num_of_objects
         return context
+
+# class Recommend_User_View(TemplateView):
+#     template_name = 'result_user.html'
+#     def get_context_data(self, **kwargs):
+#         USERID = int(self.request.GET.get("user"))+1000
+#         context = super().get_context_data(**kwargs)
+#         context['rating_movies'] = 0
+#         return context
+
+# class Recommend_Item_View(TemplateView):
+    # template_name = 'result_item.html'
+    # def get_context_data(self, **kwargs):
+    #     USERID = int(self.request.GET.get("user"))+1000
+    #     context = super().get_context_data(**kwargs)
+    #     context['rating_movies'] = 0
+    #     return context

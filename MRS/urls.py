@@ -24,17 +24,19 @@ from moviedata.views import detailView,detailbyIDView,RecommendView
 
 urlpatterns = [
     path(r'admin/', admin.site.urls),
+    path(r'accounts/', include('user.url')),
+    path(r'accounts/', include('django.contrib.auth.urls')),
     re_path(r'^$', IndexView.as_view(), name=''),
     re_path(r'^search/$', TemplateView.as_view(template_name='search.html'),),
     re_path(r'^search/query$', v.search_detail),
     re_path(r'db$', v.search),
     re_path(r'rating/', v.rating),
     re_path(r'^profile/$',m.getprofile),
-    re_path(r'^recommend/$',RecommendView.as_view(), name=''),
     re_path(r'^moviedetail/search$',detailView.as_view(),name=''),
     re_path(r'^moviedetail/searchbyid$',detailbyIDView.as_view(),name=''),
-    path(r'accounts/', include('user.url')),
-    path(r'accounts/', include('django.contrib.auth.urls')),
+    re_path(r'^recommend/$',RecommendView.as_view(), name=''),
+    re_path(r'^recommends/userbased/$',m.recom1),
+    re_path(r'^recommends/itembased/$',m.recom2),
     # url(r'accounts/', include('django.contrib.auth.urls')),
 ]
 
