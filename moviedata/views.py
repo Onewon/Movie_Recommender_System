@@ -34,7 +34,7 @@ def getcontent(param,useid=False):# 获取api json
 #     return render_to_response(template_name,data)
     # data : {"id":xxx}
     # templateView how to get request
-def getprofile(request):
+def getprofile(request): #for empty user, has bugs.
     con = []
     if request.method=="POST":
         rating_form = request.POST
@@ -43,7 +43,6 @@ def getprofile(request):
             response = getcontent(record.rating_Movieid,True)
             response["rating"] = record.rating
             con.append(response)
-        #逻辑(1)：查找是否存在，存在不创建，修改； 不存在，则创建。Done
     else:
         pass
     return render(request, 'profile.html',{'container':con})

@@ -30,10 +30,21 @@
     <div id="director"><b>Director:</b> {{Director}}</div>
     <div id="language"><b>Language:</b> {{Language}}</div>
     <div id="country"><b>Country:</b> {{Country}}</div>
-
+    {% if user.is_authenticated %}
+    <div id="last_mark"><b>Last Rating:</b></div>
+    {% endif %}
     <star></star>
     <input type="hidden" id="hint"></input>
+    {% if user.is_authenticated %}
     <button id="submit_score" type="button">rate it!</button>
+    {% else %}
+    <button id="not_login" type="button">Rate</button>
+    <script>
+    $('#not_login').on("click",function(){
+      alert("Please login to rate.");
+    })
+    </script>
+    {% endif %}
     </div>
 </div>
 <!-- <iframe id="id_iframe" name="nf_iframe" style="display:none;"></iframe> -->
@@ -809,7 +820,7 @@
     };
   })(jQuery);
 
-  </script><!-- js/jquery.raty.js -->
+</script><!-- js/jquery.raty.js -->
 
 <script>
   $('star').raty(
