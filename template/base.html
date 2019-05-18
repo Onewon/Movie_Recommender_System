@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 {% block head %}
 {% endblock %}
 </head>
@@ -29,7 +30,6 @@
                   <div class="collapse navbar-collapse" id="navbar-collapse-3">
                     <ul class="nav navbar-nav navbar-default">
                       <li><a href="/">Home</a></li>
-                      <!-- <li><a href="#">Search</a></li> -->
                       {% if user.is_authenticated %}
                       <li><a href="/recommend?user={{user.id}}">Recommendation</a></li>
                       {% else %}
@@ -46,7 +46,7 @@
                             {% if user.is_authenticated %}
                             <ul class="nav navbar-nav navbar-right">
                                 <li><a class="login_info" style="font-size: 15px">Welcome ! {{ user.username }} </a></li>
-                                <li><a href="/profile">MyProfile</a></li>
+                                <li id="profile"><a>MyProfile</a></li>
                                 <li><a class="btn btn-default btn-outline btn-circle" href="{% url 'logout' %}">Logout</a></li>
                             </ul>
                             {% else %}
@@ -86,4 +86,33 @@
 
 {% block javascript %}
 {% endblock %}
+<script>
+  $.extend({
+    StandardPost:function(url,args){
+        var body = $(document.body),
+            form = $("<form method='post'></form>"),
+            input;
+        form.attr({"action":url});
+        $.each(args,function(key,value){
+            input = $("<input type='hidden'>");
+            input.attr({"name":key});
+            input.val(value);
+            form.append(input);
+        });
+        form.appendTo(document.body);
+        form.submit();
+        document.body.removeChild(form[0]);
+    }
+});
+</script>
+<script>
+ $(document).ready(function(){
+$("#profile").on("click",function(){
+$.StandardPost('/profile/',{
+        USERID: '{{user.id}}',
+        'csrfmiddlewaretoken':'{{ csrf_token }}',
+    })
+})
+});
+</script>
 </html>

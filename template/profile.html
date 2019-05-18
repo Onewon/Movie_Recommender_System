@@ -1,42 +1,120 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load the_tag %}
 
 {% block head %}
+<style>
+table.table {
+  table-layout: auto;
+  width: 70%;
+}
+</style>
+
     <title>Movie Recommender System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-	  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-   	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/jquery.raty.css' %}">
-
 {% endblock %}
 
 {% block content %}
-<div class ="container" style="background-color: rgb(255, 255, 255,0.65); height:90%;">
+<div class ="container" style="background-color: rgb(255, 255, 255,0.65); height:130%;">
     <div class="row">
-    <div id="userdetail" class="col-md-4 col-sm-6 col-xs-12 sidebar">
+    <div id="userdetail" class="col-md-2 col-sm-12 col-xs-12 sidebar">
     <h2>{{user.id}}</h2>
     <h2>{{user.username}}</h2>
     </div>
-
-    <div id="rating detail" class="col-md-8 col-sm-6 col-xs-12 content" style="font-size: 22px;color: rgb(42, 43, 42)">
+    <div id="rating detail" class="col-md-10 col-sm-12 col-xs-12 content">
     <h2>The Movies You Rated</h2>
-    <div id="movie_container">
-        <p>-----------------------</p>
-        <div id="movie_poster">
-            movie_poster
-        </div>
-        <div id="rating_time">
-            rating_time
-        </div>
-        <div id="movie_genre">
-            movie_genre
-        </div>
-        <div id="movie_rating">
-            movie_rating
-        </div>
+    <div class="form-group">
+        <select name="state" id="maxRows" class="form-control" style="width: 150px">
+            <option value="500">Show All</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+        </select>
+        <section class="pagination-container">
+                <nav>
+                    <ul class="pagination"></ul>
+                </nav>
+        </section>
+    </div>
+    <div class="container">
+       <table id="myTable" class="table table-bordered table-hover">
+       <!-- <table id="myTable" class="table table-fluid"> -->
+       <thead>
+        <tr>
+            <th>Poster</th>
+            <th>Title</th>
+            <th>Rating</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for r in container %}
+        <tr>
+        <td><img src='{{ r|get_value:"Poster" }}' style="width: auto;height: auto;max-width: 38%;max-height: 38%;">
+        </td>
+        <td><a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}'>{{ r|get_value:"Title" }}</a></td>
+        <td>{{ r|get_value:"rating" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
     </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    var table = '#myTable';
+    $('#maxRows').on('change',function(){
+    $('.pagination').html()
+        var trnum = 0;
+        var maxRows = parseInt($(this).val());
+        var totalRows = $(table+' tbody tr').length;
+        $(table+' tr:gt(0)').each(function(){
+            trnum++;
+            if(trnum>maxRows){
+                $(this).hide()
+            }
+            if(trnum <= maxRows){
+                $(this).show()
+            }
+        })
+        if(totalRows > maxRows){
+            var pagenum = Math.ceil(totalRows/maxRows);
+            for(var i =1;i<=pagenum;){
+                $('.pagination').append(
+                    '<li data-page="'+i+'">\<span>'+ i++ +'<span class="sr-only">(current)</span></span>\</li>').show()
+                    }
+                }
+            $('.pagination li:first-child').addClass('active');
+            $('.pagination li').on('click',function(){
+            var pagenum = $(this).attr('data-page')
+            var trIndex = 0;
+            $('.pagination li').removeClass('active');
+            $(this).addClass('active');
+            $(table+' tr:gt(0)').each(function(){
+                trIndex++;
+                if(trIndex > (maxRows*pagenum) || trIndex <=((maxRows*pagenum)-maxRows)){
+                    $(this).hide();
+                }
+                else{
+                    $(this).show();
+                }
+            })
+        });
+    })
+    $(function(){
+        $('table tr:eq(0)').prepend('<th>ID</th>')
+        var id=0;
+        $('table tr:gt(0)').each(function(){
+            id++;
+            $(this).prepend('<td>'+id+'</td>');
+        })
+    })
+</script>
 {% endblock %}

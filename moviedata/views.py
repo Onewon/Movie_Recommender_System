@@ -34,6 +34,20 @@ def getcontent(param,useid=False):# 获取api json
 #     return render_to_response(template_name,data)
     # data : {"id":xxx}
     # templateView how to get request
+def getprofile(request):
+    con = []
+    if request.method=="POST":
+        rating_form = request.POST
+        USERID = int(rating_form["USERID"])+1000
+        for record in rt.objects.filter(userid = USERID):
+            response = getcontent(record.rating_Movieid,True)
+            response["rating"] = record.rating
+            con.append(response)
+        #逻辑(1)：查找是否存在，存在不创建，修改； 不存在，则创建。Done
+    else:
+        pass
+    return render(request, 'profile.html',{'container':con})
+    # return HttpResponseRedirect('/')
 
 class detailView(TemplateView):
     template_name = 'movie_detail.html'
@@ -59,7 +73,7 @@ class detailbyIDView(TemplateView):
     template_name = 'movie_detail.html'
     def get_context_data(self, **kwargs):
         param = self.request.GET.get("id")
-        data = getcontent(param,useid=True)
+        data = getcontent(param,True)
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context['index'] = param
