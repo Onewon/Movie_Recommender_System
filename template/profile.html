@@ -16,7 +16,7 @@ table.table {
 {% endblock %}
 
 {% block content %}
-<div class ="container" style="background-color: rgb(255, 255, 255,0.65); height:130%;">
+<div class ="container" style="background-color: rgb(255, 255, 255,0.65); height:auto;">
     <div class="row">
     <div id="userdetail" class="col-md-2 col-sm-12 col-xs-12 sidebar">
     <h2>{{user.id}}</h2>
@@ -24,7 +24,7 @@ table.table {
     </div>
     <div id="rating detail" class="col-md-10 col-sm-12 col-xs-12 content">
     <h2>The Movies You Rated</h2>
-    <div class="form-group">
+    <div class="form-group" style="display: none;">
         <select name="state" id="maxRows" class="form-control" style="width: 150px">
             <option value="500">Show All</option>
             <option value="5">5</option>
@@ -32,12 +32,12 @@ table.table {
             <option value="20">20</option>
             <option value="30">30</option>
         </select>
-        <section class="pagination-container">
-                <nav>
-                    <ul class="pagination"></ul>
-                </nav>
-        </section>
     </div>
+    <section class="pagination-container">
+            <nav>
+                <ul class="pagination"></ul>
+            </nav>
+    </section>
     <div class="container">
        <table id="myTable" class="table table-bordered table-hover">
        <!-- <table id="myTable" class="table table-fluid"> -->
@@ -51,7 +51,7 @@ table.table {
         <tbody>
         {% for r in container %}
         <tr>
-        <td><img src='{{ r|get_value:"Poster" }}' style="width: auto;height: auto;max-width: 38%;max-height: 38%;">
+        <td><img src='{{ r|get_value:"Poster" }}' style="width: 84px;height:125px;max-width: 100%;max-height: 100%;">
         </td>
         <td><a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}'>{{ r|get_value:"Title" }}</a></td>
         <td>{{ r|get_value:"rating" }}</td>
@@ -68,7 +68,7 @@ table.table {
 <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script>
+<!-- <script>
     var table = '#myTable';
     $('#maxRows').on('change',function(){
     $('.pagination').html()
@@ -116,5 +116,46 @@ table.table {
             $(this).prepend('<td>'+id+'</td>');
         })
     })
+</script> -->
+
+<script>
+var table = '#myTable';
+        $(document).ready(function(){
+        $('.pagination').html()
+        var trnum = 0;
+        var maxRows = parseInt(5);
+        var totalRows = $(table+' tbody tr').length;
+        $(table+' tr:gt(0)').each(function(){
+            trnum++;
+            if(trnum>maxRows){
+                $(this).hide()
+            }
+            if(trnum <= maxRows){
+                $(this).show()
+            }
+        })
+        if(totalRows > maxRows){
+            var pagenum = Math.ceil(totalRows/maxRows);
+            for(var i =1;i<=pagenum;){
+                $('.pagination').append(
+                    '<li data-page="'+i+'">\<span>'+ i++ +'<span class="sr-only">(current)</span></span>\</li>').show()
+                    }
+                }
+            $('.pagination li:first-child').addClass('active');
+            $('.pagination li').on('click',function(){
+            var pagenum = $(this).attr('data-page')
+            var trIndex = 0;
+            $('.pagination li').removeClass('active');
+            $(this).addClass('active');
+            $(table+' tr:gt(0)').each(function(){
+                trIndex++;
+                if(trIndex > (maxRows*pagenum) || trIndex <=((maxRows*pagenum)-maxRows)){
+                    $(this).hide();
+                }
+                else{
+                    $(this).show();
+                }
+            })
+        });})
 </script>
 {% endblock %}

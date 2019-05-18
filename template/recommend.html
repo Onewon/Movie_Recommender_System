@@ -2,25 +2,54 @@
 {% load staticfiles %}
 
 {% block head %}
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Movie Recommender System</title>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Movie Recommender System</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-   	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!-- <link rel="stylesheet" href="{% static 'css/search.css' %}"> -->
-	{% endblock %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- <link rel="stylesheet" href="{% static 'css/search.css' %}"> -->
+<style>
+#Recom1
+{
+    position: relative;
+    border-radius: 25px 25px 25px 25px;
+    font-size: 18px;
+    font-size-adjust: inherit;
+    height: 50px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: #4CAF50;
+    color: #fff;
+}
+#Recom2
+{
+    position: relative;
+    border-radius: 25px 25px 25px 25px;
+    font-size: 18px;
+    font-size-adjust: inherit;
+    height: 50px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: #4CAF50;
+    color: #fff;
+}
+</style>
+{% endblock %}
 
 
 
 {% block content %}
-<div class = "box">
-    <div id="test">
+<div class ="container" style="background-color: rgb(255, 255, 255,0.65); height:90%;">
+    <div class="row" align="center">
         <h1>You have rated {{rating_movies}} movies</h1>
+        <br>
+        <div><button id="Recom1">Generate Recommendation Based on Others</button></div>
+        <br>
+        <div><button id="Recom2">Generate Recommendation Based on Content</button></div>
     </div>
-    <button id="Recom" style="position: relative; border-radius: 25px 25px 25px 25px; font-size-adjust: inherit; height: 50px; border: none; outline: none; cursor: pointer; background: #4CAF50; color: #fff;">Generate Recommendation</button>
-    <!-- Post -->
 </div>
 {% endblock %}
