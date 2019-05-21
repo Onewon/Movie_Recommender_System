@@ -1,22 +1,30 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load the_tag %}
 
 {% block head %}
 <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<title>User-based Recommendation</title>
+<title>User-based Recommendation: Others also like</title>
 {% endblock %}
 
 {% block content %}
+<div id="atitle" align="center"><h1 style="font-weight: bold">Recommendation Result</h1></div>
+<ul class="figures_lists" style= "margin-left: 35; list-style-type: none;">
+{% for r in Res %}
 <li class="list_item" data-trigger-class="list_item_hover" style="display: inline-block;
-vertical-align: top;  margin-bottom: 20px;  position: relative;  width:15%;  padding: 5px;">
-    <div class="pic" style="width: 80%">
-        <img style="width: 182px;height: 268px;" src="">
+vertical-align: top;  margin-bottom: 20px;  position: relative;  width:16%;  padding: 5px;">
+    <div class="pic" style="width: 80%" align="center">
+        <img style="width: 182px;height: 268px;" src="{{ r|get_value:"Poster" }}">
+        <!-- <img src='{{ r|get_value:"Poster" }}' style="width: 84px;height:125px;max-width: 100%;max-height: 100%;"> -->
     </div>
     <div class="figure_title" align="center">
-        <a href="" target="_blank" style="color: honeydew;">Title</a>
+        <a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}' target="_blank" style="font-size:110%; color: honeydew;">{{ r|get_value:"Title" }}</a>
     </div>
 </li>
+{% endfor %}
+</ul>
+
 {% endblock %}
 
 {% block javascript %}
