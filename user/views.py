@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 import json,requests,os
 from user.models import Resulttable as rt
+from user.models import User as ur
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,16 +37,16 @@ def getfilename(path): #poster_dir, filename
 
 dir_set = {}
 genre_set = {}
-for f in (getfolder(static_path)): #得到所有的type名称和type文件夹地址
+for f in (getfolder(static_path)): #
     movie_type = f
     movie_type_dir = static_path+"\\"+f
     dir_set[movie_type] = movie_type_dir      #{genre: [path],....}
 
-for genre in dir_set.keys(): #每一个类别
+for genre in dir_set.keys(): #
     # print ("Genre: "+genre)
     con = []
-    for ix in getfilename(dir_set.get(genre)): #通过所有的type文件夹地址
-        con.append(ix)                         #得到所有的file名字
+    for ix in getfilename(dir_set.get(genre)): #
+        con.append(ix)                         #
     genre_set[genre] = con                     # {genre: [index.....], .....}
 with open(BASE_DIR +"/static/res/title_index.json","r",encoding="utf-8") as inp:
     data = inp.read()
@@ -67,8 +68,8 @@ class IndexView(TemplateView):
         # "Love","Science fiction","Thriller",
         # "Biography","Family","History","Horror","Music","War",]
         # context['item_list'] = ["Action","Horror","Comedy","Animation","Science fiction","Crime","Love"]
-        context['genres'] = genre_set #首页的预设genre得到index 不需要get json
-        context['titleset'] = dataset #首页的预设title 不需要get json
+        context['genres'] = genre_set #
+        context['titleset'] = dataset #
         return context
 
 # def index(request,template_name):
@@ -85,31 +86,27 @@ def search_detail(request):
     return HttpResponseRedirect("/moviedetail/search?title="+param)
     #return HttpResponseRedirect("http://www.omdbapi.com/?&t="+param+"&apikey=9be27fce")
 def register(request):
-    # 只有当请求为 POST 时，才表示用户提交了注册信息
+
     if request.method == 'POST':
-        # request.POST 是一个类字典数据结构，记录了用户提交的注册信息
-        # 这里提交的就是用户名（username）、密码（password）、邮箱（email）
-        # 用这些数据实例化一个用户注册表单
+
         form = RegisterForm(request.POST)
 
-        # 验证数据的合法性
+        #
         if form.is_valid():
-            # 如果提交数据合法，调用表单的 save 方法将用户数据保存到数据库
+            #
             user = form.save()
 
-            # 注册成功，跳转回首页
+            #
             # user = authenticate(username=form["username"], password=form["password1"])
             # auth.login(request, user)
             request.session.set_expiry(0)
             login(request,user)
             return redirect('/')
     else:
-        # 请求不是 POST，表明用户正在访问注册页面，展示一个空的注册表单给用户
+        #
         form = RegisterForm()
 
-    # 渲染模板
-    # 如果用户正在访问注册页面，则渲染的是一个空的注册表单
-    # 如果用户通过表单提交注册信息，但是数据验证不合法，则渲染的是一个带有错误信息的表单
+    #
     return render(request, 'registration/register.html', context={'form': form})
 def rating(request):
     if request.method=="POST":
@@ -122,12 +119,30 @@ def rating(request):
             userid=USERID,rating_Movieid=IMDBID,
             defaults={'rating': MOVIE_RATING},
         )
-        #逻辑(1)：查找是否存在，存在不创建，修改； 不存在，则创建。Done
     else:
         pass
     #return render(request, 'index.html',{'userId':USERID,'rating':RATING,'imdbId':IMDBID})
     return HttpResponseRedirect('/')
 
-#逻辑(n)：批量评分集，用dict实现单页面重复添加去重？ 可是已经提交过的无法再次提交了
-#逻辑(3)：刷新后，已评分会显示已经评分的。
-#逻辑: 没有create就不会有重复，实现去重。Done
+def updateprofile(request):
+    if request.method=="POST":
+        profile_form = request.POST
+        # USERID = int(rating_form["userid"]) +1000
+        # IMDBID = str(rating_form["movieid"])
+        # MOVIE_RATING = float(rating_form["rating"])
+        USERID = int(profile_form["USERID"])+1000
+        GENDER = str(profile_form["GENDER"])
+        BIRTH = str(profile_form["BIRTHYEAR"])
+        PREFER = str(profile_form["PREFER"])
+        # rt.objects.create(userid=USERID,rating_Movieid=IMDBID,rating=MOVIE_RATING)
+        obj, created = ur.objects.update_or_create(
+            userid=USERID,
+            defaults={'gender': GENDER,'rating': MOVIE_RATING,
+            'prefer': prefer,'birth': BIRTH,
+            },
+        )
+    else:
+        pass
+    #return render(request, 'index.html',{'userId':USERID,'rating':RATING,'imdbId':IMDBID})
+    return HttpResponseRedirect('/')
+

@@ -851,7 +851,7 @@ click: function(score, evt) {
 $(document).ready(function(){
 $("#submit_score").click(function(){
   $.post("/rating/",{userid:"{{user.id}}", movieid:"{{index}}",rating:result,'csrfmiddlewaretoken':'{{ csrf_token }}'});
-  //,function(data,status){ #返回的response数据
+  //,function(data,status){
   // alert("user {{user.id}} rate the movie {{index}} the score "+ result +" successfully");
   $(this).replaceWith('<button disabled="" id="submit_score" type="button" style="background: rgba(255, 255, 255, 0.3);color: rgba(0, 0, 0, 0.4);">Submitted</button>');
 })
