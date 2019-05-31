@@ -3,12 +3,22 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser #extends AbstractUser model
 
 class User(AbstractUser):
-    nickname = models.CharField(max_length=50, blank=True)
-    gender = models.CharField(max_length=10)
-    introduction = models.TextField(max_length=200)
-    userid = models.CharField(max_length=20,null=True)
+#     nickname = models.CharField(max_length=50, blank=True)
+#     gender = models.CharField(max_length=10)
+#     introduction = models.TextField(max_length=200,null=True)
+#     userid = models.CharField(max_length=50,null=True)
+#     prefer = models.CharField(max_length=50,null=True)
+#     birth = models.CharField(max_length=10,null=True)
     class Meta(AbstractUser.Meta):
         pass
+
+class User_detail(models.Model):
+    nickname = models.CharField(max_length=50, blank=True)
+    gender = models.CharField(max_length=10)
+    introduction = models.TextField(max_length=200,null=True)
+    userid = models.CharField(max_length=50,null=True)
+    prefer = models.CharField(max_length=50,null=True)
+    birth = models.CharField(max_length=10,null=True)
 
 class Resulttable(models.Model):
     """Model definition for Result."""

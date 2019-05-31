@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import render_to_response
-import json,os,requests
+import json,os,requests,time
 from django.views.generic import TemplateView
 from .models import Moviestable as mt
 from user.models import Resulttable as rt
@@ -55,9 +55,13 @@ def recom1(request):
         USERID = int(form["USERID"])+1000
     else:
         pass
+    #timer start
+    time_start = time.time()
     resmovies_list = []
     resmovies_list = Res_list.get(str(USERID))
-    # resmovies_list = l
+    '''
+    #recommendation part
+    '''
     resdetail_list = []
     if resmovies_list!=[]:
         for item in resmovies_list:
@@ -65,7 +69,9 @@ def recom1(request):
             resdetail_list.append(content)
     else:
         pass
-    return render(request, 'result_user.html',{"Res":resdetail_list})
+    #timer end
+    time_end = time.time()
+    return render(request, 'result_user.html',{"Res":resdetail_list,"ResponseTime": str(round(time_end - time_start,2))})
 def recom2(request):
     if request.method=="POST":
         form = request.POST

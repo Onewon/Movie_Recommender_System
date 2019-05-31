@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 import json,requests,os
 from user.models import Resulttable as rt
-from user.models import User as ur
+from user.models import User_detail as ur
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -127,18 +127,17 @@ def rating(request):
 def updateprofile(request):
     if request.method=="POST":
         profile_form = request.POST
-        # USERID = int(rating_form["userid"]) +1000
-        # IMDBID = str(rating_form["movieid"])
-        # MOVIE_RATING = float(rating_form["rating"])
-        USERID = int(profile_form["USERID"])+1000
+        USERID = int(profile_form["USERID"])
         GENDER = str(profile_form["GENDER"])
-        BIRTH = str(profile_form["BIRTHYEAR"])
+        BIRTH =  str(profile_form["BIRTHYEAR"])
         PREFER = str(profile_form["PREFER"])
-        # rt.objects.create(userid=USERID,rating_Movieid=IMDBID,rating=MOVIE_RATING)
         obj, created = ur.objects.update_or_create(
-            userid=USERID,
-            defaults={'gender': GENDER,'rating': MOVIE_RATING,
-            'prefer': prefer,'birth': BIRTH,
+            id=USERID,
+            defaults={
+            'gender': GENDER,
+            'prefer': PREFER,
+            'birth': BIRTH,
+            'userid': USERID+1000,
             },
         )
     else:

@@ -9,7 +9,9 @@
 {% endblock %}
 
 {% block content %}
-<div id="atitle" align="center"><h1 style="font-weight: bold">Recommendation Result</h1></div>
+<div id="atitle" align="center"><h1 style="font-weight: bold">Recommendation Result</h1>
+<h2>It spent {{ResponseTime}}s</h2>
+</div>
 <ul class="figures_lists" style= "margin-left: 35; list-style-type: none;">
 {% for r in Res %}
 <li class="list_item" data-trigger-class="list_item_hover" style="display: inline-block;

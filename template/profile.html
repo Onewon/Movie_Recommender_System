@@ -60,7 +60,7 @@ $(document).ready(function(){
         var ge = document.getElementById("gender").value;
         var year = document.getElementById("birth").value;
         var genres = document.getElementById("prefer").value;
-        $.StandardPost('/profile/Post/',{
+        $.StandardPost('/profile/post/',{
         USERID: '{{user.id}}',
         GENDER: ge,
         BIRTHYEAR: year,
