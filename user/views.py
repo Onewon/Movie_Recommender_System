@@ -9,6 +9,7 @@ from django.views.generic import TemplateView
 import json,requests,os
 from user.models import Resulttable as rt
 from user.models import User_detail as ur
+from django.db.models import Q
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -123,6 +124,23 @@ def rating(request):
         pass
     #return render(request, 'index.html',{'userId':USERID,'rating':RATING,'imdbId':IMDBID})
     return HttpResponseRedirect('/')
+
+def deleteRating(request):
+    if request.method=="POST":
+        del_form = request.POST
+        USERID = int(del_form["USERID"]) +1000
+        IMDBID = str(del_form["DELMOVIE"])
+        # rt.objects.create(userid=USERID,rating_Movieid=IMDBID,rating=MOVIE_RATING)
+        # obj, created = rt.objects.update_or_create(
+        #     userid=USERID,rating_Movieid=IMDBID,
+        #     defaults={'rating': MOVIE_RATING},
+        # )
+        rt.objects.filter(userid=USERID,rating_Movieid=IMDBID).delete()
+    else:
+        pass
+    #return render(request, 'index.html',{'userId':USERID,'rating':RATING,'imdbId':IMDBID})
+    return HttpResponseRedirect('/')
+
 
 def updateprofile(request):
     if request.method=="POST":

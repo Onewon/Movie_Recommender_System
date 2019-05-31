@@ -31,6 +31,7 @@ urlpatterns = [
     re_path(r'^search/query$', v.search_detail),
     re_path(r'db$', v.search),
     re_path(r'rating/', v.rating),
+    re_path(r'del/', v.deleteRating),
     re_path(r'^profile/$',m.getprofile),
     re_path(r'^profile/detail$',m.getprofiledetail),
     re_path(r'^profile/post/',v.updateprofile),

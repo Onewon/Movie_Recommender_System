@@ -4,15 +4,137 @@ import json,os,requests,time
 from django.views.generic import TemplateView
 from .models import Moviestable as mt
 from user.models import Resulttable as rt
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import scale
+import time,json,os
+import pprint as pp
+
 Res_list = {}
-l = ['tt1431045','tt2948356','tt2543164','tt3315342','tt1856101','tt0848228', 'tt1345836', 'tt1490017', 'tt0816692', 'tt2015381', 'tt2084970','tt1136608', 'tt0499549', 'tt0892769', 'tt1375666','tt0076759', 'tt0111161', 'tt0109830', 'tt0108052', 'tt0080684', 'tt0093779', 'tt0082971', 'tt0086190', 'tt0120815', 'tt0133093', 'tt0137523', 'tt0120689', 'tt0126029', 'tt0198781', 'tt0120737', 'tt0167261', 'tt0266543', 'tt0325980', 'tt0167260', 'tt0317705', 'tt0372784', 'tt0482571', 'tt0468569', 'tt0371746', 'tt0910970', 'tt0361748', 'tt1049413']
-Res_list["1016"] = l
-Res_list["1017"] = ['tt0317705', 'tt0372784', 'tt0407887',
- 'tt0482571', 'tt0468569', 'tt0371746','tt0910970', 'tt0361748', 'tt1375666', 'tt0816692', 'tt2015381',
-'tt0114746', 'tt0114369', 'tt0114814', 'tt0112573', 'tt0112384', 'tt0111161', 'tt0109830', 'tt0110357', 'tt0107290',
-  'tt0108052', 'tt0103064', 'tt0102926', 'tt0116282', 'tt0116629','tt0068646', 'tt0080684', 'tt0082971', 'tt0086190', 'tt0088763',
-    'tt0097576', 'tt0119217', 'tt0120815', 'tt0133093', 'tt0167404','tt0169547', 'tt0137523', 'tt0172495', 'tt0209144', 'tt0126029', 'tt0198781',
-      'tt0120737', 'tt0167261', 'tt0266543', 'tt0325980', 'tt0167260', 'tt0304141',]
+from sqlalchemy import create_engine
+
+class Usercf():
+    def __init__(self):
+        self.path = r"D:\MY CODE LIBRARY\NewPython\movie model\ratings.csv"
+        self.link_path = r"D:\MY CODE LIBRARY\NewPython\movie model\links_lated.csv"
+        self.movie_link = pd.read_csv(self.link_path)
+        self.wateched_list = {}
+        self.watch_list = []
+        self.themap = {}
+        self.end_id = 610
+    # rating.csv, links.csv, watched_list
+
+    # read user result
+    def readresult(self,userid):
+        #eg: userid = 1005,1016
+        engine = create_engine('mysql+pymysql://root:123456@localhost:3306/userinfo')
+        sql = "select * from user_resulttable"
+        rt = pd.read_sql_query(sql, engine)
+        target_index = rt[rt["userid"] == str(userid)]["rating_Movieid"].tolist()
+        rating_index = rt[rt["userid"] == str(userid)]["rating"].tolist()
+
+        imdb_and_rating = []
+        preferred_movies_imdb = []
+        for i in target_index:
+            i = i.replace("tt","")
+            preferred_movies_imdb.append(int(i))
+
+        imdb_and_rating.append(preferred_movies_imdb) #imdbID
+        imdb_and_rating.append(rating_index) #rating
+        return imdb_and_rating
+
+    # imdb to normal
+    def imdb2normal(self,box):
+        rating_map = {}
+        preferred_movies = []
+        missing_index = [] #没有links的movie index
+        for index in box[0]:
+            id_imdb = self.movie_link[self.movie_link["imdbId"] == index]["movieId"].tolist()
+            if len(id_imdb)==0:
+                missing_index.append(index)
+                continue
+            preferred_movies.append(int(id_imdb.pop()))
+        #print ("Missing index has "+str(len(missing_index)))
+        for i,rating in enumerate(box[-1]):
+            rating_map[preferred_movies[i]] = rating
+        return rating_map
+
+    # normal to imdb
+    def normal2imdb(self,box):
+        preferred_imdb_movies = []
+        missing_index = [] #没有links的movie index
+        for index in box:
+            id_n = self.movie_link[self.movie_link["movieId"] == index]["imdbId"].tolist()
+            if len(id_n)==0:
+                missing_index.append(index)
+                continue
+            theindex = str(id_n.pop())
+            while len(theindex)<7:
+                theindex = "0"+theindex
+            preferred_imdb_movies.append("tt"+theindex)
+        #print ("Missing index has "+str(len(missing_index)))
+        return preferred_imdb_movies
+
+    #numpy cal
+    def np_cal(self,user_rating):
+        # 把二维数组转化为矩阵
+        x = np.mat(user_rating) # userid,movieid,rating.
+        # 对每一行对数据，进行标准化
+        x_s = scale(x, with_mean=True, with_std=True, axis=1)
+        # 获取 XX'
+        y = x_s.dot(x_s.transpose())
+        # 夹角余弦的分母
+        v = np.zeros((np.shape(y)[0], np.shape(y)[1]))
+        v[:] = np.diag(y)
+        # 获用户相似度矩阵 US , 对应位置上元素相除
+        us = y/v
+        # 通过用户之间的相似度，计算 USP 矩阵
+        usp = np.mat(us).dot(x_s)
+        # 求用于归一化的分母 按行求和
+        usr = np.sum(us, axis=1)
+        # 进行元素对应的除法 归一化
+        p = np.divide(usp, np.mat(usr).transpose())
+        return p
+
+    #cal similarity
+    def sim_index(self,path,additive):
+        #global self.wateched_list
+        # 运行开始时间
+        time_start = time.time()
+        # 加载用户对电影对评分数据
+        df = pd.read_csv(self.path)
+
+        # 获取用户对数量和电影对数量
+        user_num = df["userId"].max()
+        #movie_num = df["movieId"].max() #193609 #194125
+        movie_num = 194125
+
+        # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
+        user_rating = np.zeros((user_num+1, movie_num))
+        # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
+        df["userId"] = df["userId"] - 1
+        df["movieId"] = df["movieId"] - 1
+
+        for index in range(user_num):
+            #pp.pprint(df[df["userId"] == index]["rating"])
+            user_rating[index][df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
+            self.wateched_list[index] = df[df["userId"] == index]["movieId"].tolist()
+
+        #--------------在这添加我的用户的评分进user_rating 和 wateched_list---------------------
+        for m,r in additive.items():
+            user_rating[index+1][m-1] = r
+        #-------------------------------------------------------------------------------------
+        p = self.np_cal(user_rating)
+
+        # 运行结束时间
+        time_end = time.time()
+
+        # print(p)
+        #print(np.shape(p))
+        print("Time spends:", time_end - time_start)
+        return p
+
+
 
 #backup: 4ee790e0/d82cb888/386234f9/d58193b6/15c0aa3f
 def getcontent(param,useid=False):# 获取api json
@@ -58,20 +180,51 @@ def recom1(request):
     #timer start
     time_start = time.time()
     resmovies_list = []
-    resmovies_list = Res_list.get(str(USERID))
-    '''
+
+    #
     #recommendation part
-    '''
+    usercf = Usercf()
+    imdb_list = usercf.readresult(USERID)
+    normal_map = usercf.imdb2normal(imdb_list)
+
+    for k in normal_map.keys():
+        usercf.watch_list.append(k)
+    usercf.wateched_list[usercf.end_id] = usercf.watch_list
+
+    p = usercf.sim_index(usercf.path,normal_map)
+    target_person = p[usercf.end_id]
+
+    it = np.nditer(target_person, flags=['f_index'], op_flags = ['readwrite'])
+    while not it.finished:
+        usercf.themap[it.index] = str(np.format_float_positional(it[0]))
+        it.iternext()
+
+    wlist = usercf.wateched_list[usercf.end_id]
+    for index,value in usercf.themap.items():
+        v = float(value)
+        #去掉看过的
+        if((index+1) in wlist):
+            continue
+
+        #推荐分数线
+        if(v>=10.0):
+            resmovies_list.append(index+1)
+    # imdb to normal
+    resmovies_list = usercf.normal2imdb(resmovies_list)
+    #resmovies_list = Res_list.get(str(USERID))
+
     resdetail_list = []
     if resmovies_list!=[]:
         for item in resmovies_list:
-            content = getcontent(item,True)
+            content = getcontent(item,True) #cost time
             resdetail_list.append(content)
     else:
         pass
     #timer end
     time_end = time.time()
-    return render(request, 'result_user.html',{"Res":resdetail_list,"ResponseTime": str(round(time_end - time_start,2))})
+    return render(request, 'result_user.html',
+    {"Res":resdetail_list,"ResponseTime": str(round(time_end - time_start,2))})
+
 def recom2(request):
     if request.method=="POST":
         form = request.POST
@@ -80,6 +233,7 @@ def recom2(request):
         pass
 
     return render(request, 'result_item.html',{})
+
 
 class detailView(TemplateView):
     template_name = 'movie_detail.html'

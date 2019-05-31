@@ -52,6 +52,7 @@ table.table {
             <th>Poster</th>
             <th>Title</th>
             <th>Rating</th>
+            <th> </th>
         </tr>
         </thead>
         <tbody>
@@ -61,6 +62,7 @@ table.table {
         </td>
         <td><a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}'>{{ r|get_value:"Title" }}</a></td>
         <td>{{ r|get_value:"rating" }}</td>
+        <td><a class="del_rating" id="{{r|get_value:'imdbID'}}">Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -163,5 +165,26 @@ var table = '#myTable';
                 }
             })
         });})
+</script>
+
+<script>
+$(document).ready(function(){
+
+for (i = 0; i < document.getElementsByClassName("del_rating").length; i++)
+{
+    // Get the image and insert it inside the modal - use its "alt" text as a caption
+    var d = document.getElementsByClassName("del_rating")[i];
+    d.onclick = function(){
+        var rating_index = this.id;
+        // alert("delete "+rating_index);
+        $.StandardPost('/del/',{
+        USERID: '{{user.id}}',
+        DELMOVIE: rating_index,
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+        })
+    }
+}
+
+})
 </script>
 {% endblock %}
