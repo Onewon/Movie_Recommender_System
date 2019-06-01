@@ -9,6 +9,7 @@ import pandas as pd
 from sklearn.preprocessing import scale
 import time,json,os
 import pprint as pp
+from scipy.sparse import dia_matrix,coo_matrix,lil_matrix
 
 Res_list = {}
 from sqlalchemy import create_engine
@@ -110,7 +111,12 @@ class Usercf():
         #movie_num = df["movieId"].max() #193609 #194125
 
         # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
-        user_rating = np.zeros((user_num+1, self.movie_num))
+        # user_rating = np.zeros((user_num+1, self.movie_num)) # try change
+        # user_rating = dia_matrix((user_num+1, self.movie_num), dtype=np.float16).toarray()
+        # user_rating = coo_matrix((user_num+1, self.movie_num)).toarray()
+        user_rating = lil_matrix((user_num+1, self.movie_num))
+
+
         # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
         df["userId"] = df["userId"] - 1
         df["movieId"] = df["movieId"] - 1
@@ -124,6 +130,7 @@ class Usercf():
         for m,r in additive.items():
             user_rating[index+1][m-1] = r #index+1 是给上边循环后的最后一位置加一
         #-------------------------------------------------------------------------------------
+        user_rating = user_rating.todia()
         p = self.np_cal(user_rating)
 
         # 运行结束时间
