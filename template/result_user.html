@@ -6,12 +6,24 @@
 <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <title>User-based Recommendation: Others also like</title>
+<style>
+#big_title{
+    color: floralwhite;
+}
+nav.pagination-container{
+    height: 10%;
+    margin-left: 77%;
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<div id="atitle" align="center"><h1 style="font-weight: bold">Recommendation Result</h1>
-<h2>It spent {{ResponseTime}}s</h2>
+<div id="atitle" align="center">
+<h1 id="big_title" style="font-weight: bold">Recommendation Result</h1>
+<!-- <h2>It spent {{ResponseTime}}s</h2> -->
 </div>
+<div id="res_result">
+<block id="res_list"></block>
 <ul class="figures_lists" style= "margin-left: 35; list-style-type: none;">
 {% for r in Res %}
 <li class="list_item" data-trigger-class="list_item_hover" style="display: inline-block;
@@ -20,19 +32,19 @@ vertical-align: top;  margin-bottom: 20px;  position: relative;  width:16%;  pad
         <img style="width: 182px;height: 268px;" src="{{ r|get_value:"Poster" }}">
     </div>
     <div class="figure_title" align="center">
-        <a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}' target="_blank" style="font-size:110%; color: honeydew;">{{ r|get_value:"Title" }}</a>
+        <a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}' target="_blank" style="font-weight: bold;font-size:110%; color: honeydew;">{{ r|get_value:"Title" }}</a>
     </div>
 </li>
 {% endfor %}
 </ul>
-
 {% endblock %}
 
 {% block javascript %}
 <script src="{% static 'js/paginathing.js' %}"></script>
 <script>
-    $('ul').paginathing({
-        perPage: 20,
+    $(".figures_lists").paginathing({
+        perPage: 18,
+        insertAfter: '#res_list',
     })
 </script>
 {% endblock %}

@@ -250,6 +250,7 @@ def recom1(request):
         pass
     #timer end
     time_end = time.time()
+    print (str(round(time_end - time_start,2)))
     return render(request, 'result_user.html',
     {"Res":resdetail_list,"ResponseTime": str(round(time_end - time_start,2))})
 

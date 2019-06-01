@@ -181,7 +181,7 @@
 
       // If insertAfter is defined
       if (options.insertAfter) {
-        _self.container.append(_self.ul).insertAfter($(options.insertAfter));
+        _self.container.append(_self.ul).insertBefore($(options.insertAfter));
       } else {
         _self.el.after(_self.container.append(_self.ul));
       }
