@@ -22,7 +22,7 @@ class Usercf():
         self.watch_list = []
         self.themap = {}
         self.movie_num = 194126 # total movie matrix col
-        self.end_id = 610 # based on the length of ratings.csv
+        self.end_id = 671 # based on the length of ratings.csv
     # rating.csv, links.csv, watched_list
 
     # read user result
