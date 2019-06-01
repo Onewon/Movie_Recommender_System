@@ -29,4 +29,10 @@ vertical-align: top;  margin-bottom: 20px;  position: relative;  width:16%;  pad
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'js/paginathing.js' %}"></script>
+<script>
+    $('ul').paginathing({
+        perPage: 20,
+    })
+</script>
 {% endblock %}

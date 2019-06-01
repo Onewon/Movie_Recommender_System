@@ -9,21 +9,21 @@ import pandas as pd
 from sklearn.preprocessing import scale
 import time,json,os
 import pprint as pp
-from scipy.sparse import dia_matrix,coo_matrix,lil_matrix
+# from scipy.sparse import dia_matrix,coo_matrix,lil_matrix
 
 Res_list = {}
 from sqlalchemy import create_engine
 
 class Usercf():
     def __init__(self):
-        self.path = r"D:\MY CODE LIBRARY\NewPython\movie model\ratings.csv"
+        self.path = r"D:\MY CODE LIBRARY\NewPython\movie model\ratings_base.csv"
         self.link_path = r"D:\MY CODE LIBRARY\NewPython\movie model\links_lated.csv"
         self.movie_link = pd.read_csv(self.link_path)
         self.wateched_list = {}
         self.watch_list = []
         self.themap = {}
         self.movie_num = 194126 # total movie matrix col
-        self.end_id = 7120 # based on the length of ratings.csv
+        self.end_id = 610 # based on the length of ratings.csv
     # rating.csv, links.csv, watched_list
 
     # read user result
@@ -111,16 +111,16 @@ class Usercf():
         #movie_num = df["movieId"].max() #193609 #194125
 
         # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
-        # user_rating = np.zeros((user_num+1, self.movie_num)) # try change
+        user_rating = np.zeros((user_num+1, self.movie_num))
         # user_rating = dia_matrix((user_num+1, self.movie_num), dtype=np.float16).toarray()
         # user_rating = coo_matrix((user_num+1, self.movie_num)).toarray()
-        user_rating = lil_matrix((user_num+1, self.movie_num))
+        # user_rating = lil_matrix((user_num+1, self.movie_num))
 
 
         # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
         df["userId"] = df["userId"] - 1
         df["movieId"] = df["movieId"] - 1
-        '''try1
+
         for index in range(user_num):
             #pp.pprint(df[df["userId"] == index]["rating"])
             user_rating[index][df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
@@ -129,14 +129,8 @@ class Usercf():
         #--------------在这添加我的用户的评分进user_rating 和 wateched_list---------------------
         for m,r in additive.items():
             user_rating[index+1][m-1] = r #index+1 是给上边循环后的最后一位置加一
-        '''
-        #-------------------------------------------------------------------------------------
-        for index in range(user_num):
-            #pp.pprint(df[df["userId"] == index]["rating"])
-            user_rating[index,df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
-            self.wateched_list[index] = df[df["userId"] == index]["movieId"].tolist()
 
-        user_rating = user_rating.todia().toarray()
+        #-------------------------------------------------------------------------------------
         p = self.np_cal(user_rating)
 
         # 运行结束时间
