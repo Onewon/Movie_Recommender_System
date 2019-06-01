@@ -21,7 +21,8 @@ class Usercf():
         self.wateched_list = {}
         self.watch_list = []
         self.themap = {}
-        self.end_id = 610
+        self.movie_num = 194126 # total movie matrix col
+        self.end_id = 610 # based on the length of ratings.csv
     # rating.csv, links.csv, watched_list
 
     # read user result
@@ -37,7 +38,7 @@ class Usercf():
         preferred_movies_imdb = []
         for i in target_index:
             i = i.replace("tt","")
-            preferred_movies_imdb.append(int(i))
+            preferred_movies_imdb.append(int(i)) # int 失去0
 
         imdb_and_rating.append(preferred_movies_imdb) #imdbID
         imdb_and_rating.append(rating_index) #rating
@@ -107,10 +108,9 @@ class Usercf():
         # 获取用户对数量和电影对数量
         user_num = df["userId"].max()
         #movie_num = df["movieId"].max() #193609 #194125
-        movie_num = 194125
 
         # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
-        user_rating = np.zeros((user_num+1, movie_num))
+        user_rating = np.zeros((user_num+1, self.movie_num))
         # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
         df["userId"] = df["userId"] - 1
         df["movieId"] = df["movieId"] - 1
@@ -122,7 +122,7 @@ class Usercf():
 
         #--------------在这添加我的用户的评分进user_rating 和 wateched_list---------------------
         for m,r in additive.items():
-            user_rating[index+1][m-1] = r
+            user_rating[index+1][m-1] = r #index+1 是给上边循环后的最后一位置加一
         #-------------------------------------------------------------------------------------
         p = self.np_cal(user_rating)
 
@@ -171,6 +171,25 @@ def getprofile(request): #for empty user, has bugs.
 def getprofiledetail(request):
     return render(request, 'profile.html',{})
 
+def Sorting(dicts):
+    indexs = [i for i in dicts.keys()]
+    length=len(indexs)
+    for i in range(length-1):
+        for j in range(length-1):
+            if dicts.get(indexs[j])>dicts.get(indexs[j+1]):
+                indexs[j],indexs[j+1]=indexs[j+1],indexs[j]
+    # new_dict = {}
+    # for i in indexs:
+    #     new_dict[i] = dicts.get(i)
+    return indexs
+# def bubble_sort(array):
+#     length=len(array)
+#     for i in range(length-1):
+#         for j in range(length-1):
+#             if array[j]>array[j+1]:
+#                 array[j],array[j+1]=array[j+1],array[j]
+#     return array
+
 def recom1(request):
     if request.method=="POST":
         form = request.POST
@@ -179,6 +198,7 @@ def recom1(request):
         pass
     #timer start
     time_start = time.time()
+    random_dict = {}
     resmovies_list = []
 
     #
@@ -188,7 +208,7 @@ def recom1(request):
     normal_map = usercf.imdb2normal(imdb_list)
 
     for k in normal_map.keys():
-        usercf.watch_list.append(k)
+        usercf.watch_list.append(int(k-1)) # test-set index minus 1
     usercf.wateched_list[usercf.end_id] = usercf.watch_list
 
     p = usercf.sim_index(usercf.path,normal_map)
@@ -199,23 +219,24 @@ def recom1(request):
         usercf.themap[it.index] = str(np.format_float_positional(it[0]))
         it.iternext()
 
-    wlist = usercf.wateched_list[usercf.end_id]
+    # wlist = usercf.wateched_list[usercf.end_id]
     for index,value in usercf.themap.items():
         v = float(value)
         #去掉看过的
-        if((index+1) in wlist):
+        if((index) in usercf.watch_list):
             continue
 
         #推荐分数线
         if(v>=10.0):
-            resmovies_list.append(index+1)
+            random_dict[index+1] = v
+    resmovies_list = Sorting(random_dict)
     # imdb to normal
     resmovies_list = usercf.normal2imdb(resmovies_list)
     #resmovies_list = Res_list.get(str(USERID))
 
     resdetail_list = []
     if resmovies_list!=[]:
-        for item in resmovies_list:
+        for item in resmovies_list[::-1]:
             content = getcontent(item,True) #cost time
             resdetail_list.append(content)
     else:
