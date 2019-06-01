@@ -120,7 +120,7 @@ class Usercf():
         # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
         df["userId"] = df["userId"] - 1
         df["movieId"] = df["movieId"] - 1
-
+        '''try1
         for index in range(user_num):
             #pp.pprint(df[df["userId"] == index]["rating"])
             user_rating[index][df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
@@ -129,8 +129,14 @@ class Usercf():
         #--------------在这添加我的用户的评分进user_rating 和 wateched_list---------------------
         for m,r in additive.items():
             user_rating[index+1][m-1] = r #index+1 是给上边循环后的最后一位置加一
+        '''
         #-------------------------------------------------------------------------------------
-        user_rating = user_rating.todia()
+        for index in range(user_num):
+            #pp.pprint(df[df["userId"] == index]["rating"])
+            user_rating[index,df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
+            self.wateched_list[index] = df[df["userId"] == index]["movieId"].tolist()
+
+        user_rating = user_rating.todia().toarray()
         p = self.np_cal(user_rating)
 
         # 运行结束时间
