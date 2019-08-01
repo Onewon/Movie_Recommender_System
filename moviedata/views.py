@@ -19,11 +19,12 @@ class Usercf():
     def __init__(self):
         self.path = b_dir+r"\static\res\csv\ratings_base.csv"
         self.link_path = b_dir+r"\static\res\csv\links_latest.csv"
+        self.rating_filename = r"pre_user_rating.npy"
         self.movie_link = pd.read_csv(self.link_path)
-        self.wateched_list = {}
-        self.watch_list = []
-        self.themap = {}
-        self.movie_num = 194126 # total movie matrix col
+        #self.wateched_list = {}
+        self.watch_list = [] #删除推荐中重复的 已评分的
+        self.themap = {} #
+        self.movie_num = 194126 # total movie matrix col ,depend movie number of the link.csv
         self.end_id = 610 # based on the length of ratings.csv
     # rating.csv, links.csv, watched_list
 
@@ -103,30 +104,34 @@ class Usercf():
     def sim_index(self,path,additive):
         #global self.wateched_list
         # 运行开始时间
+        npypath = b_dir + "\\" + self.rating_filename
         time_start = time.time()
-        # 加载用户对电影对评分数据
-        df = pd.read_csv(self.path)
+        if not os.path.isfile(npypath):
+            df = pd.read_csv(path)
 
-        # 获取用户对数量和电影对数量
-        user_num = df["userId"].max()
-        #movie_num = df["movieId"].max() #193609 #194125
+            # 获取用户对数量和电影对数量
+            user_num = df["userId"].max()
+            #movie_num = df["movieId"].max() #193609 #194125
 
-        # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
-        user_rating = np.zeros((user_num+1, self.movie_num))
-        # user_rating = dia_matrix((user_num+1, self.movie_num), dtype=np.float16).toarray()
-        # user_rating = coo_matrix((user_num+1, self.movie_num)).toarray()
-        # user_rating = lil_matrix((user_num+1, self.movie_num))
+            # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
+            user_rating = np.zeros((user_num+1, self.movie_num))
+            # user_rating = dia_matrix((user_num+1, self.movie_num), dtype=np.float16).toarray()
 
+            # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
+            df["userId"] = df["userId"] - 1
+            df["movieId"] = df["movieId"] - 1
 
-        # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
-        df["userId"] = df["userId"] - 1
-        df["movieId"] = df["movieId"] - 1
-
-        for index in range(user_num):
-            #pp.pprint(df[df["userId"] == index]["rating"])
-            user_rating[index][df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
-            self.wateched_list[index] = df[df["userId"] == index]["movieId"].tolist()
-
+            for index in range(user_num):
+                #pp.pprint(df[df["userId"] == index]["rating"])
+                user_rating[index][df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
+                # self.wateched_list[index] = df[df["userId"] == index]["movieId"].tolist() #edited 2019.8.1
+            
+            #save npy
+            np.save(self.rating_filename,user_rating)
+        else:
+            user_rating = np.load(self.rating_filename)
+        #index = user_rating.ndim
+        index = self.end_id-1
         #--------------在这添加我的用户的评分进user_rating 和 wateched_list---------------------
         for m,r in additive.items():
             user_rating[index+1][m-1] = r #index+1 是给上边循环后的最后一位置加一
@@ -139,7 +144,7 @@ class Usercf():
 
         # print(p)
         #print(np.shape(p))
-        print("Time spends:", time_end - time_start)
+        print("Calculating time spends:", time_end - time_start)
         return p
 
 #backup: 4ee790e0/d82cb888/386234f9/d58193b6/15c0aa3f
@@ -215,7 +220,7 @@ def recom1(request):
 
     for k in normal_map.keys():
         usercf.watch_list.append(int(k-1)) # test-set index minus 1
-    usercf.wateched_list[usercf.end_id] = usercf.watch_list
+    # usercf.wateched_list[usercf.end_id] = usercf.watch_list #edited 2019.8.1
 
     p = usercf.sim_index(usercf.path,normal_map)
     target_person = p[usercf.end_id]
@@ -249,7 +254,7 @@ def recom1(request):
         pass
     #timer end
     time_end = time.time()
-    print (str(round(time_end - time_start,2)))
+    print ("Loading posters spends: "+str(round(time_end - time_start,2)))
     return render(request, 'result_user.html',
     {"Res":resdetail_list,"ResponseTime": str(round(time_end - time_start,2))})
 
