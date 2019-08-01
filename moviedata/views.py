@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 import json,os,requests,time
 from django.views.generic import TemplateView
 from .models import Moviestable as mt
+from MRS.settings import BASE_DIR as b_dir
 from user.models import Resulttable as rt
 import numpy as np
 import pandas as pd
@@ -16,8 +17,8 @@ from sqlalchemy import create_engine
 
 class Usercf():
     def __init__(self):
-        self.path = r"D:\MY CODE LIBRARY\NewPython\movie model\ratings_base.csv"
-        self.link_path = r"D:\MY CODE LIBRARY\NewPython\movie model\links_lated.csv"
+        self.path = b_dir+r"\static\res\csv\ratings_base.csv"
+        self.link_path = b_dir+r"\static\res\csv\links_latest.csv"
         self.movie_link = pd.read_csv(self.link_path)
         self.wateched_list = {}
         self.watch_list = []
@@ -28,7 +29,6 @@ class Usercf():
 
     # read user result
     def readresult(self,userid):
-        #eg: userid = 1005,1016
         engine = create_engine('mysql+pymysql://root:123456@localhost:3306/userinfo')
         sql = "select * from user_resulttable"
         rt = pd.read_sql_query(sql, engine)
@@ -39,7 +39,7 @@ class Usercf():
         preferred_movies_imdb = []
         for i in target_index:
             i = i.replace("tt","")
-            preferred_movies_imdb.append(int(i)) # int 失去0
+            preferred_movies_imdb.append(int(i)) #
 
         imdb_and_rating.append(preferred_movies_imdb) #imdbID
         imdb_and_rating.append(rating_index) #rating
@@ -79,16 +79,17 @@ class Usercf():
 
     #numpy cal
     def np_cal(self,user_rating):
-        # 把二维数组转化为矩阵
-        x = np.mat(user_rating) # userid,movieid,rating.
-        # 对每一行对数据，进行标准化
+        # Converting a 2-dimensional array into a matrix
+        x = np.mat(user_rating) # format: userid,movieid,rating
+        # normalize each row pair of data
         x_s = scale(x, with_mean=True, with_std=True, axis=1)
-        # 获取 XX'
+        # obtain X times X'(Transposition of X)
         y = x_s.dot(x_s.transpose())
-        # 夹角余弦的分母
+        # Denominator of angle cosine
         v = np.zeros((np.shape(y)[0], np.shape(y)[1]))
         v[:] = np.diag(y)
-        # 获用户相似度矩阵 US , 对应位置上元素相除
+        # Dividing of Corresponding elements,
+        # obtain User Similarity Matrix US
         us = y/v
         # 通过用户之间的相似度，计算 USP 矩阵
         usp = np.mat(us).dot(x_s)
@@ -141,10 +142,8 @@ class Usercf():
         print("Time spends:", time_end - time_start)
         return p
 
-
-
 #backup: 4ee790e0/d82cb888/386234f9/d58193b6/15c0aa3f
-def getcontent(param,useid=False):# 获取api json
+def getcontent(param,useid=False):# get api json
     db_api_t = "http://www.omdbapi.com/?apikey=9be27fce&t={}"
     db_api_i = "http://www.omdbapi.com/?apikey=9be27fce&i={}"
     content = {}
@@ -175,8 +174,8 @@ def getprofile(request): #for empty user, has bugs.
         pass
     return render(request, 'history.html',{'container':con})
 
-def getprofiledetail(request):
-    return render(request, 'profile.html',{})
+# def getprofiledetail(request):
+#     return render(request, 'profile.html',{})
 
 def Sorting(dicts):
     indexs = [i for i in dicts.keys()]
@@ -282,6 +281,8 @@ class detailView(TemplateView):
         context['Language'] = data.get("Language")
         context['Country'] = data.get("Country")
         context['index'] = data.get("imdbID")
+        context['Type'] = data.get("Type")
+        context['Website'] = data.get("Website")
         return context
 
 class detailbyIDView(TemplateView):
@@ -302,6 +303,8 @@ class detailbyIDView(TemplateView):
         context['Director'] = data.get("Director")
         context['Language'] = data.get("Language")
         context['Country'] = data.get("Country")
+        context['Type'] = data.get("Type")
+        context['Website'] = data.get("Website")
         return context
 
 class RecommendView(TemplateView):

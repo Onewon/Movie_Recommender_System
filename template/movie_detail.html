@@ -30,13 +30,15 @@
     <div id="director"><b>Director:</b> {{Director}}</div>
     <div id="language"><b>Language:</b> {{Language}}</div>
     <div id="country"><b>Country:</b> {{Country}}</div>
+    <!-- <div id="type"><b>Type:</b> {{Type}}</div> -->
+    <div id="from"><b>Website:</b><bt id="ws"> {{Website}}</bt></div>
     {% if user.is_authenticated %}
-    <div id="last_mark"><b>Last Rating:</b></div>
+    <div id="last_mark"><br></div>
     {% endif %}
     <star></star>
     <input type="hidden" id="hint"></input>
     {% if user.is_authenticated %}
-    <button id="submit_score" type="button">rate it!</button>
+    <button id="submit_score" type="button">Rate it</button>
     {% else %}
     <button id="not_login" type="button">Rate</button>
     <script>
@@ -855,6 +857,15 @@ $("#submit_score").click(function(){
   // alert("user {{user.id}} rate the movie {{index}} the score "+ result +" successfully");
   $(this).replaceWith('<button disabled="" id="submit_score" type="button" style="background: rgba(255, 255, 255, 0.3);color: rgba(0, 0, 0, 0.4);">Submitted</button>');
 })
+})
+</script>
+
+<script>
+$(document).ready(function(){
+  var text = $("#ws").text();
+ if(text.length>4){
+  $("#ws").replaceWith("<a href='"+text+"'> "+text);
+  }
 })
 </script>
 {% endblock %}

@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 import json,requests,os
 from user.models import Resulttable as rt
-from user.models import User_detail as ur
+from user.models import Users_detail as ur
 from django.db.models import Q
 
 
@@ -141,20 +141,44 @@ def deleteRating(request):
     #return render(request, 'index.html',{'userId':USERID,'rating':RATING,'imdbId':IMDBID})
     return HttpResponseRedirect('/')
 
+def getprofiledetail(request):
+    userID = "10"+request.GET.get("id")
+    profile = ur.objects.filter(userid=userID)
+    if len(profile)==0:
+        nickname=""
+        gender=""
+        birthyear=""
+        prefer=""
+    else:
+        profile = profile[0]
+        nickname = profile.nickname
+        gender= profile.gender
+        birthyear= profile.birthyear
+        prefer= profile.prefer
+
+    return render(request, 'profile.html',
+    {
+        "NIKENAME": nickname,
+        "GENDER": gender,
+        "BIRTH": birthyear,
+        "PREFER": prefer,
+    })
 
 def updateprofile(request):
     if request.method=="POST":
         profile_form = request.POST
         USERID = int(profile_form["USERID"])
+        NIKENAME = str(profile_form["NIKENAME"])
         GENDER = str(profile_form["GENDER"])
         BIRTH =  str(profile_form["BIRTHYEAR"])
         PREFER = str(profile_form["PREFER"])
         obj, created = ur.objects.update_or_create(
             id=USERID,
             defaults={
+            'nickname': NIKENAME,
             'gender': GENDER,
             'prefer': PREFER,
-            'birth': BIRTH,
+            'birthyear': BIRTH,
             'userid': USERID+1000,
             },
         )

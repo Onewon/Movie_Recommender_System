@@ -42,9 +42,10 @@ font-size: 18px;
         <p>Userid: 10{{user.id}}</p>
         </div>
         <div id="Profile detail" class="col-md-10 col-sm-12 col-xs-12 content">
-        <p>Gender</p><input id="gender" type="text">
-        <p>Birth Year</p><input id="birth" type="text">
-        <p>Preferred Genres</p><input id="prefer" type="text">
+        <p>Nickname</p><input id="nickname" type="text" value="{{NIKENAME}}">
+        <p>Gender</p><input id="gender" type="text" value="{{GENDER}}">
+        <p>Birth Year</p><input id="birth" type="text" value="{{BIRTH}}">
+        <p>Preferred Genres</p><input id="prefer" type="text" value="{{PREFER}}">
         <p></p>
         <button style="font-size: 18px;" id="update_btn">Update</button>
         </div>
@@ -57,11 +58,13 @@ font-size: 18px;
 <script>
 $(document).ready(function(){
     $("#update_btn").on("click",function(){
+        var nike = document.getElementById("nickname").value;
         var ge = document.getElementById("gender").value;
         var year = document.getElementById("birth").value;
         var genres = document.getElementById("prefer").value;
         $.StandardPost('/profile/post/',{
         USERID: '{{user.id}}',
+        NIKENAME: nike,
         GENDER: ge,
         BIRTHYEAR: year,
         PREFER: genres,

@@ -33,7 +33,7 @@ urlpatterns = [
     re_path(r'rating/', v.rating),
     re_path(r'del/', v.deleteRating),
     re_path(r'^profile/$',m.getprofile),
-    re_path(r'^profile/detail$',m.getprofiledetail),
+    re_path(r'^profile/detail$',v.getprofiledetail),
     re_path(r'^profile/post/',v.updateprofile),
     re_path(r'^moviedetail/search$',detailView.as_view(),name=''),
     re_path(r'^moviedetail/searchbyid$',detailbyIDView.as_view(),name=''),
