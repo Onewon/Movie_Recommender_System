@@ -18,14 +18,15 @@ from sqlalchemy import create_engine
 class Usercf():
     def __init__(self):
         self.path = b_dir+r"\static\res\csv\ratings_base.csv"
-        self.link_path = b_dir+r"\static\res\csv\links_latest.csv"
-        self.rating_filename = r"pre_user_rating.npy"
+        self.link_path = b_dir+r"\static\res\csv\links_latest v2.csv"
+        self.rating_filename = r"pre_user_rating v2.npy"
         self.movie_link = pd.read_csv(self.link_path)
         #self.wateched_list = {}
-        self.watch_list = [] #删除推荐中重复的 已评分的
+        self.watch_list = []
         self.themap = {} #
-        self.movie_num = 194126 # total movie matrix col ,depend movie number of the link.csv
-        self.end_id = 610 # based on the length of ratings.csv
+        self.movie_num = 194326 #194126 # total movie matrix col ,depend movie number of the link.csv
+        self.total_user_num = 610 # based on the length of ratings.csv
+        # self.end_id = 610
     # rating.csv, links.csv, watched_list
 
     # read user result
@@ -80,43 +81,34 @@ class Usercf():
 
     #numpy cal
     def np_cal(self,user_rating):
-        # Converting a 2-dimensional array into a matrix
         x = np.mat(user_rating) # format: userid,movieid,rating
-        # normalize each row pair of data
-        x_s = scale(x, with_mean=True, with_std=True, axis=1)
-        # obtain X times X'(Transposition of X)
-        y = x_s.dot(x_s.transpose())
-        # Denominator of angle cosine
+        x_s = scale(x, with_mean=True, with_std=True, axis=1)# normalize dataset
+
+        y = x_s.dot(x_s.transpose())# dot product
         v = np.zeros((np.shape(y)[0], np.shape(y)[1]))
-        v[:] = np.diag(y)
-        # Dividing of Corresponding elements,
-        # obtain User Similarity Matrix US
-        us = y/v
-        # 通过用户之间的相似度，计算 USP 矩阵
-        usp = np.mat(us).dot(x_s)
-        # 求用于归一化的分母 按行求和
-        usr = np.sum(us, axis=1)
-        # 进行元素对应的除法 归一化
-        p = np.divide(usp, np.mat(usr).transpose())
+        v[:] = np.diag(y)# Dividing of Corresponding elements,get the norm
+        us = y/v# obtain User Similarity Matrix US
+
+        usp = np.mat(us).dot(x_s)# According to similarity between user,come out with USP matrix.
+        usr = np.sum(us, axis=1)# 求分母
+        p = np.divide(usp, np.mat(usr).transpose())# 进行元素对应的除法 归一化
         return p
 
     #cal similarity
     def sim_index(self,path,additive):
         #global self.wateched_list
         # 运行开始时间
-        npypath = b_dir + "\\" + self.rating_filename
         time_start = time.time()
+        npypath = b_dir + "\\" + self.rating_filename #提高运行速度，先保存
         if not os.path.isfile(npypath):
-            df = pd.read_csv(path)
+            df = pd.read_csv(path) #读取评分文件
 
             # 获取用户对数量和电影对数量
             user_num = df["userId"].max()
             #movie_num = df["movieId"].max() #193609 #194125
-
             # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
             user_rating = np.zeros((user_num+1, self.movie_num))
             # user_rating = dia_matrix((user_num+1, self.movie_num), dtype=np.float16).toarray()
-
             # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
             df["userId"] = df["userId"] - 1
             df["movieId"] = df["movieId"] - 1
@@ -125,16 +117,16 @@ class Usercf():
                 #pp.pprint(df[df["userId"] == index]["rating"])
                 user_rating[index][df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
                 # self.wateched_list[index] = df[df["userId"] == index]["movieId"].tolist() #edited 2019.8.1
-            
+
             #save npy
             np.save(self.rating_filename,user_rating)
         else:
             user_rating = np.load(self.rating_filename)
         #index = user_rating.ndim
-        index = self.end_id-1
+        index = self.total_user_num-1
         #--------------在这添加我的用户的评分进user_rating 和 wateched_list---------------------
         for m,r in additive.items():
-            user_rating[index+1][m-1] = r #index+1 是给上边循环后的最后一位置加一
+            user_rating[index+1][m-1] = r #index+1
 
         #-------------------------------------------------------------------------------------
         p = self.np_cal(user_rating)
@@ -201,10 +193,10 @@ def Sorting(dicts):
 #                 array[j],array[j+1]=array[j+1],array[j]
 #     return array
 
-def recom1(request):
+def recom(request): #Recommendation function
     if request.method=="POST":
         form = request.POST
-        USERID = int(form["USERID"])+1000
+        USERID = int(form["USERID"])+1000 #传进来用户id
     else:
         pass
     #timer start
@@ -212,39 +204,34 @@ def recom1(request):
     random_dict = {}
     resmovies_list = []
 
-    #
     #recommendation part
     usercf = Usercf()
-    imdb_list = usercf.readresult(USERID)
+    imdb_list = usercf.readresult(USERID) #从MySQL读取该用户的评分记录
     normal_map = usercf.imdb2normal(imdb_list)
 
     for k in normal_map.keys():
-        usercf.watch_list.append(int(k-1)) # test-set index minus 1
-    # usercf.wateched_list[usercf.end_id] = usercf.watch_list #edited 2019.8.1
+        usercf.watch_list.append(int(k-1)) # index minus 1
 
     p = usercf.sim_index(usercf.path,normal_map)
-    target_person = p[usercf.end_id]
+    target_person = p[usercf.total_user_num]
 
     it = np.nditer(target_person, flags=['f_index'], op_flags = ['readwrite'])
     while not it.finished:
         usercf.themap[it.index] = str(np.format_float_positional(it[0]))
         it.iternext()
-
-    # wlist = usercf.wateched_list[usercf.end_id]
     for index,value in usercf.themap.items():
         v = float(value)
-        #去掉看过的
+        #del watched
         if((index) in usercf.watch_list):
             continue
 
-        #推荐分数线
+        #the mark line
         if(v>=10.0):
             random_dict[index+1] = v
     resmovies_list = Sorting(random_dict)
     # imdb to normal
-    resmovies_list = usercf.normal2imdb(resmovies_list)
+    resmovies_list = usercf.normal2imdb(resmovies_list) #对应的imdb
     #resmovies_list = Res_list.get(str(USERID))
-
     resdetail_list = []
     if resmovies_list!=[]:
         for item in resmovies_list[::-1]:
@@ -258,14 +245,14 @@ def recom1(request):
     return render(request, 'result_user.html',
     {"Res":resdetail_list,"ResponseTime": str(round(time_end - time_start,2))})
 
-def recom2(request):
-    if request.method=="POST":
-        form = request.POST
-        USERID = int(form["USERID"])+1000
-    else:
-        pass
+# def recom2(request):
+#     if request.method=="POST":
+#         form = request.POST
+#         USERID = int(form["USERID"])+1000
+#     else:
+#         pass
 
-    return render(request, 'result_item.html',{})
+#     return render(request, 'result_item.html',{})
 
 
 class detailView(TemplateView):

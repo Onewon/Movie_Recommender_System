@@ -38,8 +38,8 @@ urlpatterns = [
     re_path(r'^moviedetail/search$',detailView.as_view(),name=''),
     re_path(r'^moviedetail/searchbyid$',detailbyIDView.as_view(),name=''),
     re_path(r'^recommend/$',RecommendView.as_view(), name=''),
-    re_path(r'^recommends/userbased/$',m.recom1),
-    re_path(r'^recommends/itembased/$',m.recom2),
+    re_path(r'^recommends/userbased/$',m.recom),
+    # re_path(r'^recommends/itembased/$',m.recom2),
     # url(r'accounts/', include('django.contrib.auth.urls')),
 ]
 

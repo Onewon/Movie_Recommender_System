@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["127.0.0.1","localhost"]
 # Application definition
 
 INSTALLED_APPS = [
+    'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,3 +143,10 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+SIMPLEUI_LOGIN_PARTICLES = False
+# SIMPLEUI_INDEX = 'https://www.88cto.com'
+SIMPLEUI_SITE_TITLE = 'MRS Administration'
+SIMPLEUI_GITHUB = False
+# admin.site.site_header = 'MRS Administration'
