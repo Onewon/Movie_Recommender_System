@@ -82,60 +82,49 @@ class Usercf():
     #numpy cal
     def np_cal(self,user_rating):
         x = np.mat(user_rating) # format: userid,movieid,rating
-        x_s = scale(x, with_mean=True, with_std=True, axis=1)# normalize dataset
+        x_s = scale(x, with_mean=True, with_std=True, axis=1)
+        # Standardize dataset, eliminate the distraction of extreme value
 
-        y = x_s.dot(x_s.transpose())# dot product
+        y = x_s.dot(x_s.transpose())# dot product, numerator
         v = np.zeros((np.shape(y)[0], np.shape(y)[1]))
-        v[:] = np.diag(y)# Dividing of Corresponding elements,get the norm
+        v[:] = np.diag(y) # denominator
         us = y/v# obtain User Similarity Matrix US
 
         usp = np.mat(us).dot(x_s)# According to similarity between user,come out with USP matrix.
-        usr = np.sum(us, axis=1)# 求分母
-        p = np.divide(usp, np.mat(usr).transpose())# 进行元素对应的除法 归一化
+        usr = np.sum(us, axis=1)# denominator
+        p = np.divide(usp, np.mat(usr).transpose())
+        # Division of corresponding elements, Normalization get the preference matrix of user
         return p
 
     #cal similarity
     def sim_index(self,path,additive):
-        #global self.wateched_list
-        # 运行开始时间
+        # start time
         time_start = time.time()
-        npypath = b_dir + "\\" + self.rating_filename #提高运行速度，先保存
+        npypath = b_dir + "\\" + self.rating_filename # speed up
         if not os.path.isfile(npypath):
-            df = pd.read_csv(path) #读取评分文件
-
-            # 获取用户对数量和电影对数量
+            df = pd.read_csv(path) #read file
             user_num = df["userId"].max()
-            #movie_num = df["movieId"].max() #193609 #194125
-            # 构造用户对电影的二元关系矩阵 M*N array [0,0,0,0]
             user_rating = np.zeros((user_num+1, self.movie_num))
-            # user_rating = dia_matrix((user_num+1, self.movie_num), dtype=np.float16).toarray()
-            # 由于用户和电影的 ID 都是从 1 开始，为了和 Python 的索引一致，减去 1
             df["userId"] = df["userId"] - 1
             df["movieId"] = df["movieId"] - 1
 
             for index in range(user_num):
-                #pp.pprint(df[df["userId"] == index]["rating"])
                 user_rating[index][df[df["userId"] == index]["movieId"]] = df[df["userId"] == index]["rating"]
-                # self.wateched_list[index] = df[df["userId"] == index]["movieId"].tolist() #edited 2019.8.1
 
             #save npy
             np.save(self.rating_filename,user_rating)
         else:
             user_rating = np.load(self.rating_filename)
-        #index = user_rating.ndim
+
         index = self.total_user_num-1
-        #--------------在这添加我的用户的评分进user_rating 和 wateched_list---------------------
+        #--------------add my user into user_rating and load wateched_list---------------------
         for m,r in additive.items():
             user_rating[index+1][m-1] = r #index+1
+        p = self.np_cal(user_rating) # recom cal
 
-        #-------------------------------------------------------------------------------------
-        p = self.np_cal(user_rating)
-
-        # 运行结束时间
+        # end time
         time_end = time.time()
 
-        # print(p)
-        #print(np.shape(p))
         print("Calculating time spends:", time_end - time_start)
         return p
 
@@ -196,7 +185,7 @@ def Sorting(dicts):
 def recom(request): #Recommendation function
     if request.method=="POST":
         form = request.POST
-        USERID = int(form["USERID"])+1000 #传进来用户id
+        USERID = int(form["USERID"])+1000 #userid
     else:
         pass
     #timer start
@@ -206,14 +195,14 @@ def recom(request): #Recommendation function
 
     #recommendation part
     usercf = Usercf()
-    imdb_list = usercf.readresult(USERID) #从MySQL读取该用户的评分记录
+    imdb_list = usercf.readresult(USERID) #read user rating from MySQL, based on imdb ID.
     normal_map = usercf.imdb2normal(imdb_list)
-
     for k in normal_map.keys():
         usercf.watch_list.append(int(k-1)) # index minus 1
 
     p = usercf.sim_index(usercf.path,normal_map)
-    target_person = p[usercf.total_user_num]
+
+    target_person = p[usercf.total_user_num] # the preferred movie list of target user
 
     it = np.nditer(target_person, flags=['f_index'], op_flags = ['readwrite'])
     while not it.finished:
@@ -230,8 +219,7 @@ def recom(request): #Recommendation function
             random_dict[index+1] = v
     resmovies_list = Sorting(random_dict)
     # imdb to normal
-    resmovies_list = usercf.normal2imdb(resmovies_list) #对应的imdb
-    #resmovies_list = Res_list.get(str(USERID))
+    resmovies_list = usercf.normal2imdb(resmovies_list) #corresponding imdb
     resdetail_list = []
     if resmovies_list!=[]:
         for item in resmovies_list[::-1]:
