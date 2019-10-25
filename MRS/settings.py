@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'moviedata',
+    'djcelery',
     #'django_extensions'
 ]
 
@@ -90,6 +91,16 @@ DATABASES = {
         'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3306',
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
@@ -151,3 +162,12 @@ SIMPLEUI_SITE_TITLE = 'MRS Administration'
 SIMPLEUI_GITHUB = False
 # admin.site.site_header = 'MRS Administration'
 SIMPLEUI_STATIC_OFFLINE = True
+
+import djcelery
+djcelery.setup_loader()
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERYD_MAX_TASKS_PER_CHILD = 10
+# CELERY_RESULT_SERIALIZER = 'json'
