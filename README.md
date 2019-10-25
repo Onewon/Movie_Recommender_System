@@ -1,18 +1,19 @@
 # Django_Movie_Recommender_System
-This repository is one Final Year Project, based on Python Django Web framework. Build Movie Recommender System by implementing collaborative filtering algorithm.
+This repository is one final year project, based on python Django web framework. Build movie recommender system by implementing collaborative filtering algorithm.
 There are several main functionalities:
  - 1.Recommanding user favorites movies.
- - 2.Recommanding Watched the same movie's people who favorites movies.
+ - 2.Recommanding watched movies from people who favorites same movies.
  - 3.Searching target movie.
+
 ## Getting Started：
 To setup on your local machine:
 1. Install Anaconda with Python >= 3.5.(64bit), create a conda environment and activate it.
 2. Prepare python dependency
 ```
-{Anaconda.location}\Scripts\pip install -r requirements.txt
+{Anaconda.location}\Scripts\pip.exe install -r requirements.txt
 ```
 3. Prepare movie Dataset and configure MySQL databases:
-use [MovieLens dataset](https://grouplens.org/datasets/movielens/), import rating and links csv files into MySQL database, configure it in MRS/settings.py
+use [MovieLens dataset](https://grouplens.org/datasets/movielens/),to import rating and links csv files into MySQL database, and configure it in MRS/settings.py
 ```
 DATABASES = {
     'default': {
