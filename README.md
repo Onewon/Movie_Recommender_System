@@ -5,7 +5,7 @@ There are several main functionalities:
  - 2.Recommanding watched movies from people who favorites same movies.
  - 3.Searching target movie.
 
-## Getting Started：
+## Getting Started
 To setup on your local machine:
 1. Install Anaconda with Python >= 3.5.(64bit), create a conda environment and activate it.
 2. Prepare python dependency
