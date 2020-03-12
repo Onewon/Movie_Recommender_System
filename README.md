@@ -5,6 +5,8 @@ There are several main functionalities:
  - 2.Recommanding watched movies from people who favorites same movies.
  - 3.Searching target movie.
 
+####  [Screenshots](https://github.com/Onewon/Movie_Recommender_System/blob/master/screenshots/Screenshots.md)
+
 ## Getting Started
 To setup on your local machine:
 1. Install Anaconda with Python >= 3.5.(64bit), create a conda environment and activate it.
@@ -39,5 +41,3 @@ celery worker -A MRS -l info
 ```
 python manage.py runserver
 ```
-
-###  [Screenshots](https://github.com/Onewon/Movie_Recommender_System/blob/master/screenshots/Screenshots.md)
