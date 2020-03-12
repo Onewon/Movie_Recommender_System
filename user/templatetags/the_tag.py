@@ -26,7 +26,7 @@ def get_value(con,key):
 
 @register.filter
 def rangeoflist(container):
-    random_start = random.uniform(1,50)
+    random_start = random.uniform(1,25)
     r_s = int(random_start)
     r_e = r_s + 16
     return container[r_s:r_e]

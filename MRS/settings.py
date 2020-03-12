@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'moviedata',
-    'djcelery',
     #'django_extensions'
 ]
 
@@ -162,12 +161,3 @@ SIMPLEUI_SITE_TITLE = 'MRS Administration'
 SIMPLEUI_GITHUB = False
 # admin.site.site_header = 'MRS Administration'
 SIMPLEUI_STATIC_OFFLINE = True
-
-import djcelery
-djcelery.setup_loader()
-
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERYD_MAX_TASKS_PER_CHILD = 10
-# CELERY_RESULT_SERIALIZER = 'json'

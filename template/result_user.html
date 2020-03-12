@@ -19,7 +19,7 @@ nav.pagination-container{
 
 {% block content %}
 <div id="atitle" align="center">
-<h1 id="big_title" style="font-weight: bold">Recommendation Result</h1>
+<h1 id="big_title" style="font-weight: bold">Recommendation</h1>
 <!-- <h2>It spent {{ResponseTime}}s</h2> -->
 </div>
 <div id="res_result">
@@ -28,11 +28,11 @@ nav.pagination-container{
 {% for r in Res %}
 <li class="list_item" data-trigger-class="list_item_hover" style="display: inline-block;
 vertical-align: top;  margin-bottom: 20px;  position: relative;  width:16%;  padding: 5px;">
-    <div class="pic" style="width: 80%" align="center">
+    <div class="pic" style="width: 90%" align="center">
         <img style="width: 182px;height: 268px;" src="{{ r|get_value:"Poster" }}">
     </div>
     <div class="figure_title" align="center">
-        <a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}' target="_blank" style="font-weight: bold;font-size:110%; color: honeydew;">{{ r|get_value:"Title" }}</a>
+        <a href='/moviedetail/searchbyid?id={{r|get_value:"imdbID"}}' target="_blank" style="font-weight: bold;font-size:125%; color: honeydew;">{{ r|get_value:"Title" }}</a>
     </div>
 </li>
 {% endfor %}

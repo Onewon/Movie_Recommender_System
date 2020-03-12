@@ -18,8 +18,8 @@ from sqlalchemy import create_engine
 class Usercf():
     def __init__(self):
         self.path = b_dir+r"\static\res\csv\ratings_base.csv"
-        self.link_path = b_dir+r"\static\res\csv\links_latest v2.csv"
-        self.rating_filename = r"pre_user_rating v2.npy"
+        self.link_path = b_dir+r"\static\res\csv\links_latest.csv"
+        self.rating_filename = r"pre_user_rating.npy"
         self.movie_link = pd.read_csv(self.link_path)
         #self.wateched_list = {}
         self.watch_list = []

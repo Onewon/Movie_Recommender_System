@@ -3,14 +3,14 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import Template,Context
 from django.shortcuts import render, redirect
+from .forms import RegisterForm
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 import json,requests,os
-from .forms import RegisterForm
 from user.models import Resulttable as rt
 from user.models import Users_detail as ur
 from django.db.models import Q
-from user.tasks import add
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 static_path = BASE_DIR + r"\static\res\movies"
@@ -78,7 +78,6 @@ class IndexView(TemplateView):
 
 def search(request):
     param = request.GET.get("imdb")
-    result = add.delay(2, 3) # asyn try
     #return HttpResponse(param1)
     return HttpResponseRedirect("https://www.imdb.com/find?ref_=nv_sr_fn&q="+param+"&s=all")
     # context={'data': param1,}

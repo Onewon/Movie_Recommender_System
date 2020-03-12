@@ -113,7 +113,7 @@
         <div><button id="Recom1">&nbsp;Get Recommendation&nbsp;</button></div>
         <br>
         <br>
-        <div><button id="Recom2">&nbsp;Item Recommendation&nbsp;</button></div>
+        <!-- <div><button id="Recom2">&nbsp;Item Recommendation&nbsp;</button></div> -->
     </div>
 </div>
 <div class="loading" style="display:none;">
@@ -144,8 +144,6 @@ $(document).ready(function(){
         USERID: '{{user.id}}',
         'csrfmiddlewaretoken':'{{ csrf_token }}',
         })
-        $(".loading").css("display","inline");
-        $('.loading-text').css("display","inline");
     })
 })
 </script>

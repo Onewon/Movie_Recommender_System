@@ -1,0 +1,8 @@
+*.npy
+*.pyc
+*/__pycache__/*.pyc
+*/templatetags/__pycache__/*.pyc
+user/migrations/*.py
+moviedata/migrations/*.py
+*.bat
+_links_latest.csv
