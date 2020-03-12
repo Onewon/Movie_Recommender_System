@@ -40,4 +40,4 @@ celery worker -A MRS -l info
 python manage.py runserver
 ```
 
-###  [Screenshots](https://github.com/Onewon/Movie_Recommender_System/screenshots)
+###  [Screenshots](https://github.com/Onewon/Movie_Recommender_System/blob/master/screenshots/Screenshots.md)
