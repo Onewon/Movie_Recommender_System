@@ -1,11 +1,12 @@
 # Django Movie Recommender System
 This repository is one final year project, based on python Django web framework. Build movie recommender system by implementing collaborative filtering algorithm.
 There are several main functionalities:
- - 1.Recommanding user favorites movies.
- - 2.Recommanding watched movies from people who favorites same movies.
+
+ - 1.Recommending user favorites movies.
+ - 2.Recommending watched movies from people who favorites same movies.
  - 3.Searching target movie.
 
-####  [Screenshots](https://github.com/Onewon/Movie_Recommender_System/blob/master/screenshots/Screenshots.md)
+##  [Screenshots](https://github.com/Onewon/Movie_Recommender_System/blob/master/screenshots/Screenshots.md)
 
 ## Getting Started
 To setup on your local machine:
