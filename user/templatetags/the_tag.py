@@ -16,6 +16,8 @@ def check_index(i): #使用新的img集时就不需要了
 
 @register.filter
 def get_value(con,key):
+    if type(con) == str:
+        con = eval(con)
     return con.get(key)
 
 # @register.filter
