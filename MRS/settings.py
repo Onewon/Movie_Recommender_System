@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -161,3 +160,13 @@ SIMPLEUI_SITE_TITLE = 'MRS Administration'
 SIMPLEUI_GITHUB = False
 # admin.site.site_header = 'MRS Administration'
 SIMPLEUI_STATIC_OFFLINE = True
+
+CELERY_BROKER_URL = 'amqp://onewon:12345@localhost:5672/test_vhost'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/1'
+# CELERY_BACKEND_URL = 'redis://127.0.0.1:6379/1'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# No result backend is configured.
+# Please see the documentation for more information.

@@ -8,7 +8,7 @@ from user.models import Resulttable as rt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import scale
-import time,json,os
+# import time,json,os
 import pprint as pp
 # from scipy.sparse import dia_matrix,coo_matrix,lil_matrix
 
@@ -128,18 +128,26 @@ class Usercf():
         print("Calculating time spends:", time_end - time_start)
         return p
 
+from .tasks import a_crawl
+from .tasks import fetchAllRecom as fetchAll
+from .tasks import fetchAllRated
 #backup: 4ee790e0/d82cb888/386234f9/d58193b6/15c0aa3f
-def getcontent(param,useid=False):# get api json
+def getcontent(param,use_movieid=False):# get api json
     db_api_t = "http://www.omdbapi.com/?apikey=9be27fce&t={}"
     db_api_i = "http://www.omdbapi.com/?apikey=9be27fce&i={}"
     content = {}
-    if(useid==True):
+    if(use_movieid==True):
         db_api_t = db_api_i
     try:
-        header= {'User-Agent' : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"}
         url = db_api_t.format(param)
-        res = requests.get(url,headers = header)
-        resource = res.text
+
+        # header = {'User-Agent' : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"}
+        # res = requests.get(url,headers = header)
+        # resource = res.text
+        # content = json.loads(resource)
+        # return content
+
+        resource = a_crawl.delay(url).get() ## share_task
         content = json.loads(resource)
         return content
     except Exception as e:
@@ -152,10 +160,14 @@ def getprofile(request): #for empty user, has bugs.
     if request.method=="POST":
         rating_form = request.POST
         USERID = int(rating_form["USERID"])+1000
-        for record in rt.objects.filter(userid = USERID):
-            response = getcontent(record.rating_Movieid,True)
-            response["rating"] = record.rating
-            con.append(response)
+        CELERY_connector = dict()
+        for query_rs in rt.objects.filter(userid = USERID):
+            CELERY_connector[query_rs.rating_Movieid] = query_rs.rating
+        con = fetchAllRated.delay(CELERY_connector).get()
+        # for record in rt.objects.filter(userid = USERID):
+        #     response = getcontent(record.rating_Movieid,True)
+        #     response["rating"] = record.rating
+        #     con.append(response)
     else:
         pass
     return render(request, 'history.html',{'container':con})
@@ -222,11 +234,12 @@ def recom(request): #Recommendation function
     resmovies_list = usercf.normal2imdb(resmovies_list) #corresponding imdb
     resdetail_list = []
     if resmovies_list!=[]:
-        for item in resmovies_list[::-1]:
-            content = getcontent(item,True) #cost time
-            resdetail_list.append(content)
+        resdetail_list = fetchAll.delay(resmovies_list[::-1]).get() # async faster
+        # for item in resmovies_list[::-1]:
+        #    content = getcontent(item,True) #cost time
+        #    resdetail_list.append(content) # a list contains many json 
     else:
-        pass
+        print("Can not come out with recommendation data.")
     #timer end
     time_end = time.time()
     print ("Loading posters spends: "+str(round(time_end - time_start,2)))
