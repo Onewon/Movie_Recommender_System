@@ -34,7 +34,7 @@ DATABASES = {
 python manage.py makemigrations
 python manage.py migrate
 ```
-5. Ensure Redis server running in machine and run Celery to process asynchronous tasks
+5. Ensure RabbitMQ and Redis server running in machine and run Celery to process asynchronous tasks
 ```
 celery -A MRS worker -P gevent -c 100 -l info
 ```
