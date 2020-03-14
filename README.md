@@ -36,7 +36,7 @@ python manage.py migrate
 ```
 5. Ensure Redis server running in machine and run Celery to process asynchronous tasks
 ```
-celery worker -A MRS -l info
+celery -A MRS worker -P gevent -c 100 -l info
 ```
 6. Run django server
 ```
