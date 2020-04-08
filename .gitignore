@@ -6,3 +6,6 @@ user/migrations/*.py
 moviedata/migrations/*.py
 *.bat
 _links_latest.csv
+MQ_test/*
+.vscode/settings.json
+note.txt

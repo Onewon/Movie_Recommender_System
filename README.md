@@ -13,7 +13,7 @@ To setup on your local machine:
 1. Install Anaconda with Python >= 3.5.(64bit), create a conda environment and activate it.
 2. Prepare python dependency
 ```
-{Anaconda.location}\Scripts\pip.exe install -r requirements.txt
+pip install -r requirements.txt
 ```
 3. Prepare movie Dataset and configure MySQL databases:
 use [MovieLens dataset](https://grouplens.org/datasets/movielens/),to import rating and links csv files into MySQL database, and configure it in MRS/settings.py
