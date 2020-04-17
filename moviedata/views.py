@@ -12,6 +12,7 @@ import time,json,os
 import pprint as pp
 # from scipy.sparse import dia_matrix,coo_matrix,lil_matrix
 
+header= {'User-Agent' : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"}
 Res_list = {}
 from sqlalchemy import create_engine
 
@@ -136,7 +137,6 @@ def getcontent(param,useid=False):# get api json
     if(useid==True):
         db_api_t = db_api_i
     try:
-        header= {'User-Agent' : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"}
         url = db_api_t.format(param)
         res = requests.get(url,headers = header)
         resource = res.text
@@ -162,25 +162,32 @@ def getprofile(request): #for empty user, has bugs.
 
 # def getprofiledetail(request):
 #     return render(request, 'profile.html',{})
-
+refdict = dict()
+def qsort(arr,box):
+    global refdict
+    refdict = box
+    return sort(arr,0,len(arr)-1)
+def sort(arr,L,R):
+    if L<R:
+        mid = partify(arr,L,R)
+        sort(arr, L, mid-1)
+        sort(arr, mid+1, R)
+    return arr
+def partify(arr,L,R):
+    pi, left, right = refdict[arr[R]], L, R-1
+    while left <= right:
+        while left <= right and refdict[arr[left]] >= pi:
+            left +=1
+        while left <= right and refdict[arr[right]] < pi:
+            right -=1
+        if left < right:
+            arr[left], arr[right] = arr[right], arr[left]
+    arr[left] ,arr[R] = arr[R] ,arr[left]
+    return left
 def Sorting(dicts):
     indexs = [i for i in dicts.keys()]
-    length=len(indexs)
-    for i in range(length-1):
-        for j in range(length-1):
-            if dicts.get(indexs[j])>dicts.get(indexs[j+1]):
-                indexs[j],indexs[j+1]=indexs[j+1],indexs[j]
-    # new_dict = {}
-    # for i in indexs:
-    #     new_dict[i] = dicts.get(i)
+    indexs = qsort(indexs,dicts)
     return indexs
-# def bubble_sort(array):
-#     length=len(array)
-#     for i in range(length-1):
-#         for j in range(length-1):
-#             if array[j]>array[j+1]:
-#                 array[j],array[j+1]=array[j+1],array[j]
-#     return array
 
 def recom(request): #Recommendation function
     if request.method=="POST":
