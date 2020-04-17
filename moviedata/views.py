@@ -8,7 +8,6 @@ from user.models import Resulttable as rt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import scale
-import time,json,os
 import pprint as pp
 # from scipy.sparse import dia_matrix,coo_matrix,lil_matrix
 
@@ -130,11 +129,11 @@ class Usercf():
         return p
 
 #backup: 4ee790e0/d82cb888/386234f9/d58193b6/15c0aa3f
-def getcontent(param,useid=False):# get api json
+def getcontent(param,isUseMovieID=False):# get api json
     db_api_t = "http://www.omdbapi.com/?apikey=9be27fce&t={}"
     db_api_i = "http://www.omdbapi.com/?apikey=9be27fce&i={}"
     content = {}
-    if(useid==True):
+    if isUseMovieID:
         db_api_t = db_api_i
     try:
         url = db_api_t.format(param)
@@ -147,21 +146,53 @@ def getcontent(param,useid=False):# get api json
     else:
         pass
 
+def get_movie_detail(param,use_movieid=False):# get url
+    db_api_t = "http://www.omdbapi.com/?apikey=9be27fce&t={}"
+    db_api_i = "http://www.omdbapi.com/?apikey=9be27fce&i={}"
+    if use_movieid:
+        db_api_t = db_api_i
+    url = db_api_t.format(param)
+    return url
+''' gevent part'''
+import gevent
+def crawl(url):
+    res = requests.get(url,headers = header)
+    return res.text
+def FetchProfile(rating_record):
+    if type(rating_record) == dict:
+        url_list = [get_movie_detail(m,True) for m in rating_record.keys()]
+    jobs = [gevent.spawn(crawl,url) for url in url_list]
+    gevent.joinall(jobs,timeout=2)
+    detail = [worker.get() for worker in jobs]
+    res = []
+    for d in detail:
+        if type(d) == str:
+            do = eval(d)
+        mid = do.get("imdbID")
+        do["rating"] = rating_record.get(mid)
+        res.append(do)
+    return res
+def fetchAllRecommend(url_list):
+    url_list = [get_movie_detail(m_index,True) for m_index in url_list]
+    jobs = [gevent.spawn(crawl,url) for url in url_list]
+    gevent.joinall(jobs,timeout=2)
+    return [worker.get() for worker in jobs]
+'''gevent end '''
+
 def getprofile(request): #for empty user, has bugs.
     con = []
     if request.method=="POST":
         rating_form = request.POST
         USERID = int(rating_form["USERID"])+1000
-        for record in rt.objects.filter(userid = USERID):
-            response = getcontent(record.rating_Movieid,True)
-            response["rating"] = record.rating
-            con.append(response)
+        tmp_collection = dict()
+        for query_rs in rt.objects.filter(userid = USERID):
+            tmp_collection[query_rs.rating_Movieid] = query_rs.rating
+        con = FetchProfile(tmp_collection)
     else:
         pass
     return render(request, 'history.html',{'container':con})
 
-# def getprofiledetail(request):
-#     return render(request, 'profile.html',{})
+
 refdict = dict()
 def qsort(arr,box):
     global refdict
@@ -218,20 +249,18 @@ def recom(request): #Recommendation function
     for index,value in usercf.themap.items():
         v = float(value)
         #del watched
-        if((index) in usercf.watch_list):
+        if index in usercf.watch_list:
             continue
 
         #the mark line
-        if(v>=10.0):
+        if v>=10.0:
             random_dict[index+1] = v
     resmovies_list = Sorting(random_dict)
     # imdb to normal
     resmovies_list = usercf.normal2imdb(resmovies_list) #corresponding imdb
     resdetail_list = []
-    if resmovies_list!=[]:
-        for item in resmovies_list[::-1]:
-            content = getcontent(item,True) #cost time
-            resdetail_list.append(content)
+    if resmovies_list:
+        resdetail_list = fetchAllRecommend(resmovies_list)
     else:
         pass
     #timer end
