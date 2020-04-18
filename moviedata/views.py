@@ -12,6 +12,7 @@ import pprint as pp
 # from scipy.sparse import dia_matrix,coo_matrix,lil_matrix
 
 header= {'User-Agent' : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"}
+json_headers = {'Content-Type': 'application/json'}
 Res_list = {}
 from sqlalchemy import create_engine
 
@@ -154,6 +155,21 @@ def get_movie_detail(param,use_movieid=False):# get url
     url = db_api_t.format(param)
     return url
 ''' gevent part'''
+def pass2CrawlandMysql(res_list):
+    #127.0.0.1/crawl
+    temp_dict = dict()
+    _dict = dict()
+    _dict["total"] = len(res_list)
+    for urldict in res_list:
+        title = str(urldict.get("Title"))
+        filename = str(urldict.get("imdbID"))
+        poster = str(urldict.get("Poster"))
+        temp_dict[filename] = poster
+    _dict["crawl_url_list"] = temp_dict
+    target = "http://127.0.0.1:7060/crawl"
+    crawlsession = requests.Session()
+    crawlsession.post(url=target, headers=json_headers, data=json.dumps(_dict))
+
 import gevent
 def crawl(url):
     res = requests.get(url,headers = header)
@@ -167,16 +183,18 @@ def FetchProfile(rating_record):
     res = []
     for d in detail:
         if type(d) == str:
-            do = eval(d)
-        mid = do.get("imdbID")
-        do["rating"] = rating_record.get(mid)
+            do = eval(d) # dict
+        movice_id = do.get("imdbID")
+        do["rating"] = rating_record.get(movice_id)
         res.append(do)
+    pass2CrawlandMysql(res)
     return res
 def fetchAllRecommend(url_list):
     url_list = [get_movie_detail(m_index,True) for m_index in url_list]
     jobs = [gevent.spawn(crawl,url) for url in url_list]
     gevent.joinall(jobs,timeout=2)
     return [worker.get() for worker in jobs]
+
 '''gevent end '''
 
 def getprofile(request): #for empty user, has bugs.
@@ -260,7 +278,7 @@ def recom(request): #Recommendation function
     resmovies_list = usercf.normal2imdb(resmovies_list) #corresponding imdb
     resdetail_list = []
     if resmovies_list:
-        resdetail_list = fetchAllRecommend(resmovies_list)
+        resdetail_list = fetchAllRecommend(resmovies_list[6:])
     else:
         pass
     #timer end

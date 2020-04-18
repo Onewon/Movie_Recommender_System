@@ -114,9 +114,10 @@ def rating(request):
         rating_form = request.POST
         USERID = int(rating_form["userid"]) +1000
         IMDBID = str(rating_form["movieid"])
-        MOVIE_RATING = float(rating_form["rating"])
+        rating = rating_form.get("rating",default=float(0))
+        MOVIE_RATING = float(rating)
         # rt.objects.create(userid=USERID,rating_Movieid=IMDBID,rating=MOVIE_RATING)
-        obj, created = rt.objects.update_or_create(
+        _, _ = rt.objects.update_or_create(
             userid=USERID,rating_Movieid=IMDBID,
             defaults={'rating': MOVIE_RATING},
         )
@@ -172,7 +173,7 @@ def updateprofile(request):
         GENDER = str(profile_form["GENDER"])
         BIRTH =  str(profile_form["BIRTHYEAR"])
         PREFER = str(profile_form["PREFER"])
-        obj, created = ur.objects.update_or_create(
+        _, _ = ur.objects.update_or_create(
             id=USERID,
             defaults={
             'nickname': NIKENAME,
