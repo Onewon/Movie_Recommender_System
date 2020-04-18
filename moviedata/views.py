@@ -154,7 +154,7 @@ def get_movie_detail(param,use_movieid=False):# get url
         db_api_t = db_api_i
     url = db_api_t.format(param)
     return url
-''' gevent part'''
+
 def pass2CrawlandMysql(res_list):
     #127.0.0.1/crawl
     temp_dict = dict()
@@ -169,6 +169,7 @@ def pass2CrawlandMysql(res_list):
     target = "http://127.0.0.1:7060/crawl"
     crawlsession = requests.Session()
     crawlsession.post(url=target, headers=json_headers, data=json.dumps(_dict))
+''' gevent part'''
 
 import gevent
 def crawl(url):
@@ -187,7 +188,7 @@ def FetchProfile(rating_record):
         movice_id = do.get("imdbID")
         do["rating"] = rating_record.get(movice_id)
         res.append(do)
-    pass2CrawlandMysql(res)
+    #pass2CrawlandMysql(res)
     return res
 def fetchAllRecommend(url_list):
     url_list = [get_movie_detail(m_index,True) for m_index in url_list]

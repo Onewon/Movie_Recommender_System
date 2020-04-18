@@ -5,4 +5,4 @@ note.md
 MQ_test/*
 */migrations/*
 static/res/poster/*
-Downloader\test.*
+Downloader/test.*
