@@ -1,5 +1,5 @@
 # Django Movie Recommender System
-This repository is one final year project, based on python Django web framework. Build movie recommender system by implementing collaborative filtering algorithm.
+This repository is based on python Django web framework. Build movie recommender system by implementing collaborative filtering algorithm.
 There are several main functionalities:
 
  - 1.Recommending user favorites movies.
